@@ -5,6 +5,18 @@
   text-align: center;
 }
 
+/* Gray for reserved dates */
+.reserved-day {
+  background-color: #bc0000 !important; /* Light gray */
+  color: white !important;
+}
+
+/* Blue for selected dates */
+.selected-day {
+  background-color: #007bff !important; /* Blue */
+  color: white !important;
+}
+
 .logo {
   height: 6em;
   padding: 1.5em;

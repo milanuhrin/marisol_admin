@@ -2,63 +2,73 @@ import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
+import "./App.css"; // Import styles
 
-const API_URL = "https://9de4pwfk8e.execute-api.us-east-1.amazonaws.com/dev/availability"; // Replace with your API Gateway URL
+const API_URL = "https://9de4pwfk8e.execute-api.us-east-1.amazonaws.com/dev/availability";
 
 function AdminPanel({ signOut, user }) {
-  const [selectedDates, setSelectedDates] = useState([]);
-  const [initialReservedDates, setInitialReservedDates] = useState([]); // Keep track of original reserved dates
+  const [reservedDates, setReservedDates] = useState([]); // Reserved days from database
+  const [selectedDates, setSelectedDates] = useState([]); // Selected days (turn blue)
 
+  // Fetch reserved dates from database
   useEffect(() => {
-    fetch(API_URL)
-      .then((res) => res.json())
-      .then((data) => {
+    const fetchReservedDates = async () => {
+      try {
+        const response = await fetch(API_URL);
+        const data = await response.json();
+  
         if (data.success && data.availability) {
-          const unavailableDates = data.availability.map((item) => item.date);
-          console.log("Fetched unavailable dates:", unavailableDates); // ✅ Debugging
-          setSelectedDates(unavailableDates);
-          setInitialReservedDates(unavailableDates); // Store initial reserved dates
+          const reservedDatesList = data.availability.map((item) => item.date);
+          console.log("✅ Reserved Dates:", reservedDatesList);
+          setReservedDates(reservedDatesList);
         }
-      })
-      .catch((err) => console.error("Error fetching availability:", err));
+      } catch (error) {
+        console.error("❌ Error fetching availability:", error);
+      }
+    };
+  
+    fetchReservedDates();
   }, []);
 
-  const handleDateChange = (date) => {
-    const dateStr = date.toLocaleDateString("en-CA"); // Format as YYYY-MM-DD
-  
-    setSelectedDates((prevDates) => {
-      if (prevDates.includes(dateStr)) {
-        return prevDates.filter((d) => d !== dateStr); // Unreserve (remove from selected)
+  // Handle selecting/deselecting dates (including reserved ones)
+  const handleDateClick = (date) => {
+    const dateStr = date.toISOString().split("T")[0];
+
+    setSelectedDates((prevSelected) => {
+      if (prevSelected.includes(dateStr)) {
+        return prevSelected.filter((d) => d !== dateStr); // Unselect if already selected
       } else {
-        return [...prevDates, dateStr]; // Reserve (add to selected)
+        return [...prevSelected, dateStr]; // Select (turn blue)
       }
     });
   };
 
-  const saveAvailability = async () => {
+  // Reserve dates (POST request)
+  const reserveDates = async () => {
     try {
-      // Compare with currently selected dates
-      const newReservations = selectedDates.filter(date => !initialReservedDates.includes(date));
-  
-      // Reserve new dates
+      const newReservations = selectedDates.filter(date => !reservedDates.includes(date));
+
       if (newReservations.length > 0) {
         await fetch(API_URL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ dates: newReservations, available: false }),
         });
+
+        setReservedDates([...reservedDates, ...newReservations]); // Add new reservations
+        setSelectedDates([]); // Clear selected
+        alert("Rezervácia úspešná!");
       }
-  
-      alert("Rezervácia úspešná!");
     } catch (error) {
-      console.error("Error updating availability:", error);
+      console.error("Error reserving dates:", error);
       alert("Chyba pri rezervácii");
     }
   };
 
-  const unreserveAvailability = async () => {
+  // Unreserve dates (DELETE request)
+  const unreserveDates = async () => {
     try {
-      const unreservations = initialReservedDates.filter(date => !selectedDates.includes(date));
+      const unreservations = selectedDates.filter(date => reservedDates.includes(date));
 
       if (unreservations.length > 0) {
         await fetch(API_URL, {
@@ -66,13 +76,27 @@ function AdminPanel({ signOut, user }) {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ dates: unreservations }),
         });
-      }
 
-      alert("Odrezervovanie úspešné!");
+        setReservedDates(reservedDates.filter(date => !unreservations.includes(date))); // Remove unreserved
+        setSelectedDates([]); // Clear selection
+        alert("Odrezervovanie úspešné!");
+      }
     } catch (error) {
-      console.error("Error unreserving availability:", error);
+      console.error("Error unreserving dates:", error);
       alert("Chyba pri odrezervovaní");
     }
+  };
+
+  // Apply styles to calendar days
+  const tileClassName = ({ date, view }) => {
+    if (view !== "month") return null; // Only apply styles in month view
+
+    const dateStr = date.toISOString().split("T")[0];
+
+    if (selectedDates.includes(dateStr)) return "selected-day"; // Blue when selected
+    if (reservedDates.includes(dateStr)) return "reserved-day"; // Gray when reserved
+
+    return null;
   };
 
   return (
@@ -82,23 +106,41 @@ function AdminPanel({ signOut, user }) {
 
       <h2>Admin Panel - Manage Availability</h2>
       <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "60vh" }}>
-        <Calendar onClickDay={handleDateChange} />
+        <Calendar
+          onClickDay={handleDateClick}
+          tileClassName={tileClassName}
+        />
       </div>
 
-      <p>Vybrané dátumy: {selectedDates.join(", ")}</p>
-      <button onClick={saveAvailability}>Rezervovať</button>
-      <button onClick={unreserveAvailability} style={{ marginLeft: "10px", backgroundColor: "red", color: "white" }}>
+      <button onClick={reserveDates} style={{ marginTop: "20px", padding: "10px", backgroundColor: "green", color: "white" }}>
+        Rezervovať
+      </button>
+      <button onClick={unreserveDates} style={{ marginLeft: "10px", padding: "10px", backgroundColor: "red", color: "white" }}>
         Odrezervovať
       </button>
+
+      {/* Legend */}
+      <div style={{ marginTop: "20px", display: "flex", justifyContent: "center", gap: "15px" }}>
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <div style={{ width: "20px", height: "20px", backgroundColor: "gray", marginRight: "5px" }}></div>
+          Obsadený (Reserved)
+        </div>
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <div style={{ width: "20px", height: "20px", backgroundColor: "blue", marginRight: "5px" }}></div>
+          Vybrané (Selected)
+        </div>
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <div style={{ width: "20px", height: "20px", backgroundColor: "green", marginRight: "5px" }}></div>
+          Voľný (Available)
+        </div>
+      </div>
     </div>
   );
 }
 
-// ✅ Add prop validation
 AdminPanel.propTypes = {
   signOut: PropTypes.func.isRequired,
   user: PropTypes.object.isRequired,
 };
 
-// ✅ Named export for correct Fast Refresh behavior
 export default AdminPanel;
