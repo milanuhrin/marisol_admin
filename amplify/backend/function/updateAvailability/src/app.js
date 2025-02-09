@@ -104,4 +104,4 @@ app.listen(3000, function () {
 });
 
 // Export the app for AWS Lambda
-export default app;
+module.exports = app;

@@ -18,7 +18,7 @@
       "function": {
         "updateAvailability": {
           "deploymentBucketName": "amplify-marisoladmin-dev-48eb4-deployment",
-          "s3Key": "amplify-builds/updateAvailability-58555178564461437542-build.zip"
+          "s3Key": "amplify-builds/updateAvailability-5a554d52396534513964-build.zip"
         }
       },
       "api": {

@@ -7,6 +7,7 @@ const API_URL = "https://9de4pwfk8e.execute-api.us-east-1.amazonaws.com/dev/avai
 
 function AdminPanel({ signOut, user }) {
   const [selectedDates, setSelectedDates] = useState([]);
+  const [initialReservedDates, setInitialReservedDates] = useState([]); // Keep track of original reserved dates
 
   useEffect(() => {
     fetch(API_URL)
@@ -15,7 +16,8 @@ function AdminPanel({ signOut, user }) {
         if (data.success && data.availability) {
           const unavailableDates = data.availability.map((item) => item.date);
           console.log("Fetched unavailable dates:", unavailableDates); // ✅ Debugging
-          setSelectedDates(unavailableDates); // ✅ Load unavailable dates correctly
+          setSelectedDates(unavailableDates);
+          setInitialReservedDates(unavailableDates); // Store initial reserved dates
         }
       })
       .catch((err) => console.error("Error fetching availability:", err));
@@ -35,16 +37,10 @@ function AdminPanel({ signOut, user }) {
 
   const saveAvailability = async () => {
     try {
-      // Get unavailable dates from the API (to find out which ones were unselected)
-      const response = await fetch(API_URL);
-      const data = await response.json();
-      const previouslyReserved = data.success ? data.availability.map((item) => item.date) : [];
-  
       // Compare with currently selected dates
-      const newReservations = selectedDates.filter(date => !previouslyReserved.includes(date));
-      const unreservations = previouslyReserved.filter(date => !selectedDates.includes(date));
+      const newReservations = selectedDates.filter(date => !initialReservedDates.includes(date));
   
-      // Send API request to reserve new dates
+      // Reserve new dates
       if (newReservations.length > 0) {
         await fetch(API_URL, {
           method: "POST",
@@ -53,7 +49,17 @@ function AdminPanel({ signOut, user }) {
         });
       }
   
-      // Send API request to unreserve removed dates
+      alert("Rezervácia úspešná!");
+    } catch (error) {
+      console.error("Error updating availability:", error);
+      alert("Chyba pri rezervácii");
+    }
+  };
+
+  const unreserveAvailability = async () => {
+    try {
+      const unreservations = initialReservedDates.filter(date => !selectedDates.includes(date));
+
       if (unreservations.length > 0) {
         await fetch(API_URL, {
           method: "DELETE",
@@ -61,11 +67,11 @@ function AdminPanel({ signOut, user }) {
           body: JSON.stringify({ dates: unreservations }),
         });
       }
-  
-      alert("Availability updated successfully!");
+
+      alert("Odrezervovanie úspešné!");
     } catch (error) {
-      console.error("Error updating availability:", error);
-      alert("Error updating availability");
+      console.error("Error unreserving availability:", error);
+      alert("Chyba pri odrezervovaní");
     }
   };
 
@@ -75,11 +81,15 @@ function AdminPanel({ signOut, user }) {
       <button onClick={signOut}>Logout</button>
 
       <h2>Admin Panel - Manage Availability</h2>
-      <Calendar
-        onClickDay={handleDateChange}
-        tileDisabled={({ date }) => selectedDates.includes(date.toLocaleDateString("en-CA"))}
-      />
-      <button onClick={saveAvailability}>Rezervovat</button>
+      <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "60vh" }}>
+        <Calendar onClickDay={handleDateChange} />
+      </div>
+
+      <p>Vybrané dátumy: {selectedDates.join(", ")}</p>
+      <button onClick={saveAvailability}>Rezervovať</button>
+      <button onClick={unreserveAvailability} style={{ marginLeft: "10px", backgroundColor: "red", color: "white" }}>
+        Odrezervovať
+      </button>
     </div>
   );
 }
