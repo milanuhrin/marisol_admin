@@ -1,0 +1,29 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-marisoladmin-dev-48eb4-authRole",
+      "UnauthRoleArn": "arn:aws:iam::863518433531:role/amplify-marisoladmin-dev-48eb4-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::863518433531:role/amplify-marisoladmin-dev-48eb4-authRole",
+      "Region": "us-east-1",
+      "DeploymentBucketName": "amplify-marisoladmin-dev-48eb4-deployment",
+      "UnauthRoleName": "amplify-marisoladmin-dev-48eb4-unauthRole",
+      "StackName": "amplify-marisoladmin-dev-48eb4",
+      "StackId": "arn:aws:cloudformation:us-east-1:863518433531:stack/amplify-marisoladmin-dev-48eb4/52eb4740-e6fd-11ef-a76a-0affcc82041f",
+      "AmplifyAppId": "d39j8o309sk3xb"
+    },
+    "categories": {
+      "auth": {
+        "marisoladminaeccf103": {}
+      },
+      "function": {
+        "updateAvailability": {
+          "deploymentBucketName": "amplify-marisoladmin-dev-48eb4-deployment",
+          "s3Key": "amplify-builds/updateAvailability-58555178564461437542-build.zip"
+        }
+      },
+      "api": {
+        "availabilityApi": {}
+      }
+    }
+  }
+}

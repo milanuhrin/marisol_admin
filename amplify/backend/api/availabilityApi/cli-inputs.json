@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "paths": {
+    "/availability": {
+      "name": "/availability",
+      "lambdaFunction": "updateAvailability",
+      "permissions": {
+        "setting": "open"
+      }
+    }
+  }
+}
