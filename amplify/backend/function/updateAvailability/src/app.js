@@ -1,17 +1,16 @@
-import express from "express";
-import { json } from "body-parser";
-import { eventContext } from "aws-serverless-express/middleware";
-import { DynamoDB } from "aws-sdk";
+const express = require("express");
+const bodyParser = require("body-parser");
+const awsServerlessExpressMiddleware = require("aws-serverless-express/middleware");
+const AWS = require("aws-sdk");
 
 // Set up AWS DynamoDB connection
-const dynamoDB = new DynamoDB.DocumentClient();
+const dynamoDB = new AWS.DynamoDB.DocumentClient();
 const TABLE_NAME = "Availability"; // Replace this with your actual DynamoDB table name
 
 // Declare a new express app
 const app = express();
-app.use(json());
-app.use(eventContext());
-
+app.use(bodyParser.json());
+app.use(awsServerlessExpressMiddleware.eventContext());
 // Enable CORS for all methods
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");

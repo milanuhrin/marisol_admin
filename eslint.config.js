@@ -10,7 +10,10 @@ export default [
     files: ['**/*.{js,jsx}'],
     languageOptions: {
       ecmaVersion: 2020,
-      globals: globals.browser,
+      globals: {
+        ...globals.node, // ✅ Allow Node.js global variables
+        ...globals.browser,
+      },
       parserOptions: {
         ecmaVersion: 'latest',
         ecmaFeatures: { jsx: true },
@@ -33,6 +36,7 @@ export default [
         'warn',
         { allowConstantExport: true },
       ],
+      'no-undef': 'off', // ✅ Disable the warning for 'require' not defined
     },
   },
 ]
