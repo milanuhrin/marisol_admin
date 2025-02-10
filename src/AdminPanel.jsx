@@ -6,11 +6,17 @@ import "./App.css"; // Import styles
 
 const API_URL = "https://9de4pwfk8e.execute-api.us-east-1.amazonaws.com/dev/availability";
 
-function AdminPanel({ signOut, user }) {
+// Function to ensure dates are always stored in UTC
+const formatDate = (date) => {
+  return new Date(date.getTime() - date.getTimezoneOffset() * 60000)
+    .toISOString()
+    .split("T")[0]; // Convert to UTC date
+};
+
+function AdminPanel({ signOut }) {
   const [reservedDates, setReservedDates] = useState([]); // Reserved days from database
   const [selectedDates, setSelectedDates] = useState([]); // Selected days (turn blue)
 
-  // Fetch reserved dates from database
   useEffect(() => {
     const fetchReservedDates = async () => {
       try {
@@ -19,7 +25,7 @@ function AdminPanel({ signOut, user }) {
   
         if (data.success && data.availability) {
           const reservedDatesList = data.availability.map((item) => item.date);
-          console.log("✅ Reserved Dates:", reservedDatesList);
+          console.log("✅ Reserved Dates (from API):", reservedDatesList);
           setReservedDates(reservedDatesList);
         }
       } catch (error) {
@@ -32,7 +38,7 @@ function AdminPanel({ signOut, user }) {
 
   // Handle selecting/deselecting dates (including reserved ones)
   const handleDateClick = (date) => {
-    const dateStr = date.toISOString().split("T")[0];
+    const dateStr = formatDate(date); // Ensure correct date format in UTC
 
     setSelectedDates((prevSelected) => {
       if (prevSelected.includes(dateStr)) {
@@ -41,12 +47,18 @@ function AdminPanel({ signOut, user }) {
         return [...prevSelected, dateStr]; // Select (turn blue)
       }
     });
+
+    console.log("📅 Clicked Date:", dateStr);
   };
 
   // Reserve dates (POST request)
   const reserveDates = async () => {
     try {
-      const newReservations = selectedDates.filter(date => !reservedDates.includes(date));
+      const newReservations = selectedDates
+        .map(date => formatDate(new Date(date))) // Ensure correct format
+        .filter(date => !reservedDates.includes(date));
+
+      console.log("🚀 Sending reservation request for:", newReservations);
 
       if (newReservations.length > 0) {
         await fetch(API_URL, {
@@ -55,12 +67,12 @@ function AdminPanel({ signOut, user }) {
           body: JSON.stringify({ dates: newReservations, available: false }),
         });
 
-        setReservedDates([...reservedDates, ...newReservations]); // Add new reservations
-        setSelectedDates([]); // Clear selected
+        setReservedDates([...reservedDates, ...newReservations]);
+        setSelectedDates([]); 
         alert("Rezervácia úspešná!");
       }
     } catch (error) {
-      console.error("Error reserving dates:", error);
+      console.error("❌ Error reserving dates:", error);
       alert("Chyba pri rezervácii");
     }
   };
@@ -70,6 +82,8 @@ function AdminPanel({ signOut, user }) {
     try {
       const unreservations = selectedDates.filter(date => reservedDates.includes(date));
 
+      console.log("🗑 Unreserving dates:", unreservations);
+
       if (unreservations.length > 0) {
         await fetch(API_URL, {
           method: "DELETE",
@@ -77,31 +91,30 @@ function AdminPanel({ signOut, user }) {
           body: JSON.stringify({ dates: unreservations }),
         });
 
-        setReservedDates(reservedDates.filter(date => !unreservations.includes(date))); // Remove unreserved
-        setSelectedDates([]); // Clear selection
+        setReservedDates(reservedDates.filter(date => !unreservations.includes(date)));
+        setSelectedDates([]); 
         alert("Odrezervovanie úspešné!");
       }
     } catch (error) {
-      console.error("Error unreserving dates:", error);
+      console.error("❌ Error unreserving dates:", error);
       alert("Chyba pri odrezervovaní");
     }
   };
 
   // Apply styles to calendar days
   const tileClassName = ({ date, view }) => {
-    if (view !== "month") return null; // Only apply styles in month view
+    if (view !== "month") return null;
 
-    const dateStr = date.toISOString().split("T")[0];
+    const dateStr = formatDate(date); // Ensure format is YYYY-MM-DD
 
-    if (selectedDates.includes(dateStr)) return "selected-day"; // Blue when selected
-    if (reservedDates.includes(dateStr)) return "reserved-day"; // Gray when reserved
+    if (selectedDates.includes(dateStr)) return "selected-day"; 
+    if (reservedDates.includes(dateStr)) return "reserved-day"; 
 
     return null;
   };
 
   return (
     <div style={{ textAlign: "center", marginTop: "50px" }}>
-      <h2>Welcome, {user?.username}</h2>
       <button onClick={signOut}>Logout</button>
 
       <h2>Admin Panel - Manage Availability</h2>
