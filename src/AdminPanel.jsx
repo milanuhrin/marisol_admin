@@ -112,10 +112,10 @@ function AdminPanel({ signOut, user }) {
         />
       </div>
 
-      <button onClick={reserveDates} style={{ marginTop: "20px", padding: "10px", backgroundColor: "green", color: "white" }}>
+      <button onClick={reserveDates} style={{ marginTop: "20px", padding: "10px", backgroundColor: "red", color: "white" }}>
         Rezervovať
       </button>
-      <button onClick={unreserveDates} style={{ marginLeft: "10px", padding: "10px", backgroundColor: "red", color: "white" }}>
+      <button onClick={unreserveDates} style={{ marginLeft: "10px", padding: "10px", backgroundColor: "green", color: "white" }}>
         Odrezervovať
       </button>
 
