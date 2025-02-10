@@ -6,7 +6,7 @@ import "./App.css"; // Import styles
 
 const API_URL = "https://9de4pwfk8e.execute-api.us-east-1.amazonaws.com/dev/availability";
 
-// Function to ensure dates are always stored in UTC
+// ✅ Ensure dates are always stored in UTC format
 const formatDate = (date) => {
   return new Date(date.getTime() - date.getTimezoneOffset() * 60000)
     .toISOString()
@@ -17,6 +17,7 @@ function AdminPanel({ signOut }) {
   const [reservedDates, setReservedDates] = useState([]); // Reserved days from database
   const [selectedDates, setSelectedDates] = useState([]); // Selected days (turn blue)
 
+  // ✅ Fetch reserved dates from backend
   const fetchReservedDates = async () => {
     try {
       const response = await fetch(API_URL);
@@ -32,56 +33,40 @@ function AdminPanel({ signOut }) {
       console.error("❌ Error fetching reserved dates:", error);
     }
   };
-  
 
+  // 🔄 Fetch reserved dates on component mount
   useEffect(() => {
-    const fetchReservedDates = async () => {
-      try {
-        const response = await fetch(API_URL);
-        const data = await response.json();
-  
-        if (data.success && data.availability) {
-          const reservedDatesList = data.availability.map((item) => item.date);
-          console.log("✅ Reserved Dates (from API):", reservedDatesList);
-          setReservedDates(reservedDatesList);
-        }
-      } catch (error) {
-        console.error("❌ Error fetching availability:", error);
-      }
-    };
-  
     fetchReservedDates();
   }, []);
 
-  // Handle selecting/deselecting dates (including reserved ones)
+  // 🟦 Handle selecting/deselecting dates
   const handleDateClick = (date) => {
-    const dateStr = formatDate(date); // Ensure correct date format in UTC
+    const dateStr = formatDate(date); // Convert date to UTC format
 
-    setSelectedDates((prevSelected) => {
-      if (prevSelected.includes(dateStr)) {
-        return prevSelected.filter((d) => d !== dateStr); // Unselect if already selected
-      } else {
-        return [...prevSelected, dateStr]; // Select (turn blue)
-      }
-    });
+    setSelectedDates((prevSelected) =>
+      prevSelected.includes(dateStr)
+        ? prevSelected.filter((d) => d !== dateStr) // Unselect
+        : [...prevSelected, dateStr] // Select (turn blue)
+    );
 
     console.log("📅 Clicked Date:", dateStr);
   };
 
-  // Reserve dates (POST request)
+  // 🔴 Reserve selected dates (POST request) + Auto Refresh
   const reserveDates = async () => {
     try {
       const newReservations = selectedDates.filter(date => !reservedDates.includes(date));
-  
+
       if (newReservations.length > 0) {
         await fetch(API_URL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ dates: newReservations, available: false }),
         });
-  
-        setSelectedDates([]); // Clear selected dates
-        await fetchReservedDates(); // Refresh data from backend
+
+        // ✅ Update `reservedDates` state directly (No need to re-fetch)
+        setReservedDates((prev) => [...prev, ...newReservations]);
+        setSelectedDates([]); // Clear selection
         alert("Rezervácia úspešná!");
       }
     } catch (error) {
@@ -90,20 +75,21 @@ function AdminPanel({ signOut }) {
     }
   };
 
-  // Unreserve dates (DELETE request)
+  // 🟢 Unreserve selected dates (DELETE request) + Auto Refresh
   const unreserveDates = async () => {
     try {
       const unreservations = selectedDates.filter(date => reservedDates.includes(date));
-  
+
       if (unreservations.length > 0) {
         await fetch(API_URL, {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ dates: unreservations }),
         });
-  
-        setSelectedDates([]); // Clear selected dates
-        await fetchReservedDates(); // Refresh data from backend
+
+        // ✅ Update `reservedDates` state directly (No need to re-fetch)
+        setReservedDates((prev) => prev.filter(date => !unreservations.includes(date)));
+        setSelectedDates([]); // Clear selection
         alert("Odrezervovanie úspešné!");
       }
     } catch (error) {
@@ -112,14 +98,14 @@ function AdminPanel({ signOut }) {
     }
   };
 
-  // Apply styles to calendar days
+  // 🎨 Apply styles to calendar days
   const tileClassName = ({ date, view }) => {
     if (view !== "month") return null;
 
-    const dateStr = formatDate(date); // Ensure format is YYYY-MM-DD
+    const dateStr = formatDate(date);
 
-    if (selectedDates.includes(dateStr)) return "selected-day"; 
-    if (reservedDates.includes(dateStr)) return "reserved-day"; 
+    if (selectedDates.includes(dateStr)) return "selected-day"; // Blue
+    if (reservedDates.includes(dateStr)) return "reserved-day"; // Gray
 
     return null;
   };
@@ -136,14 +122,47 @@ function AdminPanel({ signOut }) {
         />
       </div>
 
-      <button onClick={reserveDates} style={{ marginTop: "20px", padding: "10px", backgroundColor: "red", color: "white" }}>
+     {/* 🔴 Rezervovať Button */}
+     <button
+        onClick={reserveDates}
+        style={{
+          marginTop: "20px",
+          padding: "10px",
+          backgroundColor: "red",
+          color: "white",
+          border: "none",
+          borderRadius: "5px",
+          cursor: "pointer",
+          fontSize: "16px",
+          transition: "background-color 0.3s ease",
+        }}
+        onMouseOver={(e) => (e.target.style.backgroundColor = "#b30000")} // Darker red on hover
+        onMouseOut={(e) => (e.target.style.backgroundColor = "red")} // Revert to red
+      >
         Rezervovať
       </button>
-      <button onClick={unreserveDates} style={{ marginLeft: "10px", padding: "10px", backgroundColor: "green", color: "white" }}>
+
+      {/* 🟢 Odrezervovať Button */}
+      <button
+        onClick={unreserveDates}
+        style={{
+          marginLeft: "10px",
+          padding: "10px",
+          backgroundColor: "green",
+          color: "white",
+          border: "none",
+          borderRadius: "5px",
+          cursor: "pointer",
+          fontSize: "16px",
+          transition: "background-color 0.3s ease",
+        }}
+        onMouseOver={(e) => (e.target.style.backgroundColor = "#005f00")} // Darker green on hover
+        onMouseOut={(e) => (e.target.style.backgroundColor = "green")} // Revert to green
+      >
         Odrezervovať
       </button>
 
-      {/* Legend */}
+      {/* 📝 Legend */}
       <div style={{ marginTop: "20px", display: "flex", justifyContent: "center", gap: "15px" }}>
         <div style={{ display: "flex", alignItems: "center" }}>
           <div style={{ width: "20px", height: "20px", backgroundColor: "gray", marginRight: "5px" }}></div>
