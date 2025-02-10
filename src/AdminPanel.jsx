@@ -17,6 +17,23 @@ function AdminPanel({ signOut }) {
   const [reservedDates, setReservedDates] = useState([]); // Reserved days from database
   const [selectedDates, setSelectedDates] = useState([]); // Selected days (turn blue)
 
+  const fetchReservedDates = async () => {
+    try {
+      const response = await fetch(API_URL);
+      const data = await response.json();
+  
+      if (data.success && data.availability) {
+        const dates = data.availability.map((item) => item.date);
+        setReservedDates(dates); // Update state
+      } else {
+        console.error("🚨 Unexpected API response:", data);
+      }
+    } catch (error) {
+      console.error("❌ Error fetching reserved dates:", error);
+    }
+  };
+  
+
   useEffect(() => {
     const fetchReservedDates = async () => {
       try {
@@ -54,25 +71,21 @@ function AdminPanel({ signOut }) {
   // Reserve dates (POST request)
   const reserveDates = async () => {
     try {
-      const newReservations = selectedDates
-        .map(date => formatDate(new Date(date))) // Ensure correct format
-        .filter(date => !reservedDates.includes(date));
-
-      console.log("🚀 Sending reservation request for:", newReservations);
-
+      const newReservations = selectedDates.filter(date => !reservedDates.includes(date));
+  
       if (newReservations.length > 0) {
         await fetch(API_URL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ dates: newReservations, available: false }),
         });
-
-        setReservedDates([...reservedDates, ...newReservations]);
-        setSelectedDates([]); 
+  
+        setSelectedDates([]); // Clear selected dates
+        await fetchReservedDates(); // Refresh data from backend
         alert("Rezervácia úspešná!");
       }
     } catch (error) {
-      console.error("❌ Error reserving dates:", error);
+      console.error("Error reserving dates:", error);
       alert("Chyba pri rezervácii");
     }
   };
@@ -81,22 +94,20 @@ function AdminPanel({ signOut }) {
   const unreserveDates = async () => {
     try {
       const unreservations = selectedDates.filter(date => reservedDates.includes(date));
-
-      console.log("🗑 Unreserving dates:", unreservations);
-
+  
       if (unreservations.length > 0) {
         await fetch(API_URL, {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ dates: unreservations }),
         });
-
-        setReservedDates(reservedDates.filter(date => !unreservations.includes(date)));
-        setSelectedDates([]); 
+  
+        setSelectedDates([]); // Clear selected dates
+        await fetchReservedDates(); // Refresh data from backend
         alert("Odrezervovanie úspešné!");
       }
     } catch (error) {
-      console.error("❌ Error unreserving dates:", error);
+      console.error("Error unreserving dates:", error);
       alert("Chyba pri odrezervovaní");
     }
   };
