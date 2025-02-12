@@ -85,7 +85,7 @@ app.delete("/availability", async function (req, res) {
     // DynamoDB batchWrite requires the key structure to match the table's primary key
     const deleteRequests = dates.map((date) => ({
       DeleteRequest: {
-        Key: { date }, // Make sure the key name matches the table’s primary key
+        Key: { date: date, available: available }, // Make sure the key name matches the table’s primary key
       },
     }));
 
