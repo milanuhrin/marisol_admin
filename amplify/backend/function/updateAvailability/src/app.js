@@ -83,35 +83,20 @@ app.delete("/availability", async function (req, res) {
 
     console.log("🚀 Deleting dates:", dates);
 
-    const deleteRequests = dates.map((date) => ({
-      DeleteRequest: {
-        Key: { date: date },  // 🔍 Log key structure
-      },
-    }));
+    for (let date of dates) {
+      const params = {
+        TableName: TABLE_NAME,
+        Key: { date }, // ✅ Ensure this matches your DynamoDB primary key
+      };
 
-    const params = { RequestItems: { [TABLE_NAME]: deleteRequests } };
-
-    console.log("🛠 Delete Params:", JSON.stringify(params, null, 2));
-
-    const response = await dynamoDB.batchWrite(params).promise();
-    console.log("✅ Delete Response:", response);
-
-    // 🔥 Log failed deletions
-    if (response.UnprocessedItems && Object.keys(response.UnprocessedItems).length > 0) {
-      console.warn("⚠️ Some items were not deleted:", response.UnprocessedItems);
-      return res.status(500).json({
-        error: "Some items could not be deleted",
-        details: response.UnprocessedItems,
-      });
+      console.log("🛠 Deleting:", JSON.stringify(params, null, 2));
+      await dynamoDB.delete(params).promise();
     }
 
-    res.json({ success: true, message: "Dates unreserved successfully!" });
+    res.json({ success: true, message: "Dates deleted successfully!" });
   } catch (error) {
     console.error("❌ Error deleting availability:", error);
-    res.status(500).json({
-      error: "Could not delete availability",
-      details: error.toString(),
-    });
+    res.status(500).json({ error: "Could not delete availability", details: error.toString() });
   }
 });
 
