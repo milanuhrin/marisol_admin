@@ -70,7 +70,8 @@ app.post("/availability", async (req, res) => {
 
 app.delete("/availability", async (req, res) => {
   try {
-    const { dates } = req.body;
+    const body = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
+    const { dates } = body;
 
     if (!dates || dates.length === 0) {
       console.warn("⚠️ No dates provided for deletion.");
@@ -80,7 +81,7 @@ app.delete("/availability", async (req, res) => {
     console.log("🗑️ Deleting dates:", dates);
 
     const deleteRequests = dates.map(date => ({
-      DeleteRequest: { Key: { date: String(date) } }, // Convert date to string
+      DeleteRequest: { Key: { date: String(date) } },
     }));
 
     const params = { RequestItems: { [TABLE_NAME]: deleteRequests } };
