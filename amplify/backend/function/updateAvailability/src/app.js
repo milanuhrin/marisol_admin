@@ -77,33 +77,41 @@ app.delete("/availability", async function (req, res) {
     const { dates } = req.body;
 
     if (!dates || dates.length === 0) {
+      console.warn("⚠️ No dates provided for deletion.");
       return res.status(400).json({ error: "No dates provided for deletion" });
     }
 
     console.log("🚀 Deleting dates:", dates);
 
-    // DynamoDB batchWrite requires the key structure to match the table's primary key
     const deleteRequests = dates.map((date) => ({
       DeleteRequest: {
-        Key: { date: date, available: available }, // Make sure the key name matches the table’s primary key
+        Key: { date: date },  // 🔍 Log key structure
       },
     }));
 
-    const params = {
-      RequestItems: {
-        [TABLE_NAME]: deleteRequests,
-      },
-    };
+    const params = { RequestItems: { [TABLE_NAME]: deleteRequests } };
 
     console.log("🛠 Delete Params:", JSON.stringify(params, null, 2));
 
     const response = await dynamoDB.batchWrite(params).promise();
     console.log("✅ Delete Response:", response);
 
+    // 🔥 Log failed deletions
+    if (response.UnprocessedItems && Object.keys(response.UnprocessedItems).length > 0) {
+      console.warn("⚠️ Some items were not deleted:", response.UnprocessedItems);
+      return res.status(500).json({
+        error: "Some items could not be deleted",
+        details: response.UnprocessedItems,
+      });
+    }
+
     res.json({ success: true, message: "Dates unreserved successfully!" });
   } catch (error) {
     console.error("❌ Error deleting availability:", error);
-    res.status(500).json({ error: "Could not delete availability", details: error.toString() });
+    res.status(500).json({
+      error: "Could not delete availability",
+      details: error.toString(),
+    });
   }
 });
 
