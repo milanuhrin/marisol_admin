@@ -64,32 +64,39 @@ app.post("/availability", async (req, res) => {
   }
 });
 
-/*******************************************
+/*********************************************
  * DELETE: Delete Availability from DynamoDB *
- ******************************************/
+ *********************************************/
 
-app.delete("/availability", async (req, res) => {
+app.delete("/availability", async function (req, res) {
   try {
-    const body = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
-    const { dates } = body;
+    console.log("🔹 Received event body:", req.body);
+    
+    let parsedBody;
+    if (typeof req.body === "string") {
+      parsedBody = JSON.parse(req.body);  // Ensure JSON parsing
+    } else {
+      parsedBody = req.body;
+    }
 
-    if (!dates || dates.length === 0) {
+    const { dates } = parsedBody;
+
+    if (!dates || !Array.isArray(dates) || dates.length === 0) {
       console.warn("⚠️ No dates provided for deletion.");
       return res.status(400).json({ error: "No dates provided for deletion" });
     }
 
-    console.log("🗑️ Deleting dates:", dates);
+    console.log("🚀 Deleting dates:", dates);
 
-    const deleteRequests = dates.map(date => ({
-      DeleteRequest: { Key: { date: String(date) } },
-    }));
+    for (let date of dates) {
+      const params = {
+        TableName: TABLE_NAME,
+        Key: { date: String(date) },
+      };
 
-    const params = { RequestItems: { [TABLE_NAME]: deleteRequests } };
-
-    console.log("📦 Batch Delete Params:", JSON.stringify(params, null, 2));
-
-    const response = await dynamoDB.batchWrite(params).promise();
-    console.log("✅ Batch Delete Response:", response);
+      console.log("🛠 Deleting:", JSON.stringify(params, null, 2));
+      await dynamoDB.delete(params).promise();
+    }
 
     res.json({ success: true, message: "Dates deleted successfully!" });
   } catch (error) {
