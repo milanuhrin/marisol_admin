@@ -166,15 +166,15 @@ function AdminPanel({ signOut }) {
       <div style={{ marginTop: "20px", display: "flex", justifyContent: "center", gap: "15px" }}>
         <div style={{ display: "flex", alignItems: "center" }}>
           <div style={{ width: "20px", height: "20px", backgroundColor: "gray", marginRight: "5px" }}></div>
-          Obsadený (Reserved)
+          Obsadený
         </div>
         <div style={{ display: "flex", alignItems: "center" }}>
           <div style={{ width: "20px", height: "20px", backgroundColor: "blue", marginRight: "5px" }}></div>
-          Vybrané (Selected)
+          Vybraný
         </div>
         <div style={{ display: "flex", alignItems: "center" }}>
           <div style={{ width: "20px", height: "20px", backgroundColor: "green", marginRight: "5px" }}></div>
-          Voľný (Available)
+          Voľný
         </div>
       </div>
     </div>

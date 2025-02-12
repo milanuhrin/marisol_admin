@@ -18,9 +18,9 @@ app.use(function (req, res, next) {
   next();
 });
 
-/**********************
+/*****************************************
  * GET: Fetch Availability from DynamoDB *
- **********************/
+ *****************************************/
 
 app.get("/availability", async function (req, res) {
   try {
@@ -34,9 +34,9 @@ app.get("/availability", async function (req, res) {
   }
 });
 
-/****************************
+/***************************************
  * POST: Save Availability to DynamoDB *
- ****************************/
+ **************************************/
 
 app.post("/availability", async function (req, res) {
   try {
@@ -68,39 +68,43 @@ app.post("/availability", async function (req, res) {
   }
 });
 
+/*******************************************
+ * DELETE: Delete Availability to DynamoDB *
+ ******************************************/
+
 app.delete("/availability", async function (req, res) {
   try {
     const { dates } = req.body;
-    
+
     if (!dates || dates.length === 0) {
-      return res.status(400).json({ error: "No dates provided for unreservation" });
+      return res.status(400).json({ error: "No dates provided for deletion" });
     }
 
-    // Batch delete operation
+    console.log("🚀 Deleting dates:", dates);
+
+    // DynamoDB batchWrite requires the key structure to match the table's primary key
     const deleteRequests = dates.map((date) => ({
       DeleteRequest: {
-        Key: { date },
+        Key: { date: date }, // Make sure the key name matches the table’s primary key
       },
     }));
 
-    await dynamoDB
-      .batchWrite({
-        RequestItems: {
-          [TABLE_NAME]: deleteRequests,
-        },
-      })
-      .promise();
+    const params = {
+      RequestItems: {
+        [TABLE_NAME]: deleteRequests,
+      },
+    };
+
+    console.log("🛠 Delete Params:", JSON.stringify(params, null, 2));
+
+    const response = await dynamoDB.batchWrite(params).promise();
+    console.log("✅ Delete Response:", response);
 
     res.json({ success: true, message: "Dates unreserved successfully!" });
   } catch (error) {
-    console.error("Error unreserving dates:", error);
-    res.status(500).json({ error: "Could not unreserve dates" });
+    console.error("❌ Error deleting availability:", error);
+    res.status(500).json({ error: "Could not delete availability", details: error.toString() });
   }
-});
-
-// Start the server (for local testing)
-app.listen(3000, function () {
-  console.log("App started");
 });
 
 // Export the app for AWS Lambda
