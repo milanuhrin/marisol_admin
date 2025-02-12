@@ -86,7 +86,7 @@ app.delete("/availability", async function (req, res) {
     for (let date of dates) {
       const params = {
         TableName: TABLE_NAME,
-        Key: { date }, // ✅ Ensure this matches your DynamoDB primary key
+        Key: { date: String(date) }, // ✅ Correct primary key structure
       };
 
       console.log("🛠 Deleting:", JSON.stringify(params, null, 2));
