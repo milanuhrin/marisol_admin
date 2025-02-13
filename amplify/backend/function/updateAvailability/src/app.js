@@ -72,7 +72,9 @@ app.post("/availability", async function (req, res) {
 
 app.delete("/availability", async function (req, res) {
   try {
-    const { dates } = req.body;
+    // Manually parse the body if needed
+    const requestBody = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
+    const { dates } = requestBody;
 
     if (!dates || dates.length === 0) {
       console.warn("⚠️ No dates provided for deletion.");
@@ -84,7 +86,7 @@ app.delete("/availability", async function (req, res) {
     for (let date of dates) {
       const params = {
         TableName: TABLE_NAME,
-        Key: { date: String(date) }, // ✅ Correct primary key structure
+        Key: { date: String(date) },
       };
 
       console.log("🛠 Deleting:", JSON.stringify(params, null, 2));

@@ -4,7 +4,7 @@ import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import "./App.css"; // Import styles
 
-const API_URL = "https://eb8ya8rtoc.execute-api.us-east-1.amazonaws.com/dev/availability";
+const API_URL = "https://eb8ya8rtoc.execute-api.us-east-1.amazonaws.com/main/availability";
 
 // ✅ Ensure dates are always stored in UTC format
 const formatDate = (date) => {
