@@ -111,10 +111,19 @@ function AdminPanel({ signOut }) {
   };
 
   return (
-    <div style={{ textAlign: "center", marginTop: "50px" }}>
-      <button onClick={signOut}>Logout</button>
+    <div style={{ textAlign: "center", marginTop: "10px" }}>
+      <button
+        onClick={() => {
+          signOut();
+          setTimeout(() => {
+            window.location.href = "https://dznnrbng6qb50.cloudfront.net/";
+          }, 1000); // Small delay to ensure logout completes
+        }}
+      >
+        Logout
+      </button>
 
-      <h2>Admin Panel - Manage Availability</h2>
+      <h2>Admin Panel</h2>
       <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "60vh" }}>
         <Calendar
           onClickDay={handleDateClick}
@@ -126,7 +135,7 @@ function AdminPanel({ signOut }) {
      <button
         onClick={reserveDates}
         style={{
-          marginTop: "20px",
+          marginTop: "5px",
           padding: "10px",
           backgroundColor: "red",
           color: "white",
@@ -163,7 +172,7 @@ function AdminPanel({ signOut }) {
       </button>
 
       {/* 📝 Legend */}
-      <div style={{ marginTop: "20px", display: "flex", justifyContent: "center", gap: "15px" }}>
+      <div style={{ marginTop: "5px", display: "flex", justifyContent: "center", gap: "15px" }}>
         <div style={{ display: "flex", alignItems: "center" }}>
           <div style={{ width: "20px", height: "20px", backgroundColor: "gray", marginRight: "5px" }}></div>
           Obsadený
