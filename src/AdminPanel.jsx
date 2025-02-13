@@ -172,7 +172,7 @@ function AdminPanel({ signOut }) {
       </button>
 
       {/* 📝 Legend */}
-      <div style={{ marginTop: "5px", display: "flex", justifyContent: "center", gap: "15px" }}>
+      <div style={{ marginTop: "20px", display: "flex", justifyContent: "center", gap: "15px" }}>
         <div style={{ display: "flex", alignItems: "center" }}>
           <div style={{ width: "20px", height: "20px", backgroundColor: "gray", marginRight: "5px" }}></div>
           Obsadený
