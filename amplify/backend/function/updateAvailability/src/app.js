@@ -71,20 +71,17 @@ app.post("/availability", async (req, res) => {
 
 app.delete("/availability", async function (req, res) {
   try {
-    console.log("🔹 Received event body:", req.body);
-    
-    let parsedBody;
-    if (typeof req.body === "string") {
-      parsedBody = JSON.parse(req.body);  // Ensure JSON parsing
-    } else {
-      parsedBody = req.body;
-    }
+    const { dates } = req.body;
 
-    const { dates } = parsedBody;
-
-    if (!dates || !Array.isArray(dates) || dates.length === 0) {
-      console.warn("⚠️ No dates provided for deletion.");
-      return res.status(400).json({ error: "No dates provided for deletion" });
+    if (!dates || dates.length === 0) {
+      return res.status(400).json({
+        error: "No dates provided for deletion",
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "GET, POST, DELETE, OPTIONS",
+          "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        },
+      });
     }
 
     console.log("🚀 Deleting dates:", dates);
@@ -92,17 +89,33 @@ app.delete("/availability", async function (req, res) {
     for (let date of dates) {
       const params = {
         TableName: TABLE_NAME,
-        Key: { date: String(date) },
+        Key: { date: String(date) }, // ✅ Convert date to string (ensure correct primary key type)
       };
 
       console.log("🛠 Deleting:", JSON.stringify(params, null, 2));
       await dynamoDB.delete(params).promise();
     }
 
-    res.json({ success: true, message: "Dates deleted successfully!" });
+    res.json({
+      success: true,
+      message: "Dates deleted successfully!",
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, DELETE, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type, Authorization",
+      },
+    });
   } catch (error) {
     console.error("❌ Error deleting availability:", error);
-    res.status(500).json({ error: "Could not delete availability", details: error.toString() });
+    res.status(500).json({
+      error: "Could not delete availability",
+      details: error.toString(),
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "GET, POST, DELETE, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type, Authorization",
+      },
+    });
   }
 });
 
