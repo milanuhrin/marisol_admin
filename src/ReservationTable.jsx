@@ -291,6 +291,10 @@ function ReservationTable() {
             <th style={cellStyle}>Platforma</th>
             <th style={cellStyle}>Check-in/out</th>
             <th style={cellStyle}>Poznámka</th>
+            <th style={cellStyle}>Depozit</th>
+            <th style={cellStyle}>Záloha</th>
+            <th style={cellStyle}>Doplatok</th>
+            <th style={cellStyle}>Spolu</th>
             <th style={cellStyle}>Akcie</th>
           </tr>
         </thead>
@@ -307,6 +311,10 @@ function ReservationTable() {
                 {res.checkInTime} / {res.checkOutTime}
               </td>
               <td style={cellStyle}>{res.info}</td>
+              <td style={cellStyle}>{res.deposit ?? "-"}</td>
+              <td style={cellStyle}>{res.advance ?? "-"}</td>
+              <td style={cellStyle}>{res.remaining ?? "-"}</td>
+              <td style={cellStyle}>{res.total ?? "-"}</td>
               <td style={cellStyle}>
                 <button onClick={() => setShowEditForm(res)}>Upraviť</button>
                 <button
