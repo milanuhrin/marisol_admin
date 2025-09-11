@@ -128,22 +128,49 @@ function ReservationTable() {
               }
             }}
             style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+              display: "flex",
+              flexDirection: "column",
               gap: "10px",
               marginBottom: "20px",
             }}
           >
-            <input name="startDate" type="date" required placeholder="Dátum od" />
-            <input name="endDate" type="date" required placeholder="Dátum do" />
-            <input name="guestName" required placeholder="Meno hosťa" />
-            <input name="guestContact" placeholder="Kontakt" />
-            <input name="checkInTime" placeholder="Check-in (napr. 14:00)" />
-            <input name="checkOutTime" placeholder="Check-out (napr. 10:00)" />
-            <input name="platform" placeholder="Platforma (napr. AirBnB)" />
-            <input name="info" placeholder="Poznámka" />
-            <button type="submit" style={{ gridColumn: "span 2", padding: "10px", backgroundColor: "#007bff", color: "white", border: "none" }}>
+            <label>
+              Dátum od
+              <input name="startDate" type="date" required />
+            </label>
+            <label>
+              Dátum do
+              <input name="endDate" type="date" required />
+            </label>
+            <label>
+              Meno hosťa
+              <input name="guestName" required />
+            </label>
+            <label>
+              Kontakt
+              <input name="guestContact" />
+            </label>
+            <label>
+              Check-in
+              <input name="checkInTime" placeholder="napr. 14:00" />
+            </label>
+            <label>
+              Check-out
+              <input name="checkOutTime" placeholder="napr. 10:00" />
+            </label>
+            <label>
+              Platforma
+              <input name="platform" placeholder="napr. AirBnB" />
+            </label>
+            <label>
+              Poznámka
+              <input name="info" />
+            </label>
+            <button type="submit" style={{ padding: "10px", backgroundColor: "#007bff", color: "white", border: "none" }}>
               Uložiť rezerváciu
+            </button>
+            <button type="button" onClick={() => setShowForm(false)} style={{ padding: "10px" }}>
+              Zrušiť
             </button>
           </form>
         </Modal>
