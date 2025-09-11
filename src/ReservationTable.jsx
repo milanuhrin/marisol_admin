@@ -6,6 +6,10 @@ import PropTypes from 'prop-types';
 const API_URL = "https://eb8ya8rtoc.execute-api.us-east-1.amazonaws.com/main/reservation";
 
 function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, submitColor }) {
+  const [deposit, setDeposit] = useState(parseFloat(initialData.deposit) || 0);
+  const [advance, setAdvance] = useState(parseFloat(initialData.advance) || 0);
+  const total = (deposit + advance).toFixed(2);
+
   return (
     <form
       onSubmit={onSubmit}
@@ -50,11 +54,11 @@ function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, su
       </label>
       <label>
         Depozit
-        <input name="deposit" defaultValue={initialData.deposit || ""} type="number" step="0.01" />
+        <input name="deposit" type="number" step="0.01" value={deposit} onChange={e => setDeposit(parseFloat(e.target.value) || 0)} />
       </label>
       <label>
         Záloha
-        <input name="advance" defaultValue={initialData.advance || ""} type="number" step="0.01" />
+        <input name="advance" type="number" step="0.01" value={advance} onChange={e => setAdvance(parseFloat(e.target.value) || 0)} />
       </label>
       <label>
         Doplatok
@@ -67,10 +71,7 @@ function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, su
           type="number"
           step="0.01"
           readOnly
-          value={(
-            (parseFloat(initialData.deposit || 0) || 0) +
-            (parseFloat(initialData.advance || 0) || 0)
-          ).toFixed(2)}
+          value={total}
         />
       </label>
       <button type="submit" style={{ padding: "10px", backgroundColor: submitColor, color: "white", border: "none" }}>
