@@ -126,6 +126,9 @@ function AdminPanel({ signOut }) {
       </button>
 
       <h2>Admin Panel</h2>
+
+      {/* 📋 Rezervácie z Availability_v2 */}
+      <ReservationTable />
       <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "60vh" }}>
         <Calendar
           onClickDay={handleDateClick}
@@ -188,8 +191,6 @@ function AdminPanel({ signOut }) {
           Voľný
         </div>
       </div>
-    {/* 📋 Rezervácie z Availability_v2 */}
-    <ReservationTable />
     </div>
   );
 }

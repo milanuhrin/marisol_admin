@@ -56,6 +56,7 @@ function ReservationTable() {
       <button onClick={() => setShowForm(!showForm)} style={{ marginBottom: "20px" }}>
         {showForm ? "Skryť formulár" : "➕ Nová rezervácia"}
       </button>
+
       {showForm && (
         <form
           onSubmit={async (e) => {
@@ -113,6 +114,7 @@ function ReservationTable() {
           </button>
         </form>
       )}
+
       <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "10px" }}>
         <thead>
           <tr style={{ background: "#f0f0f0" }}>
