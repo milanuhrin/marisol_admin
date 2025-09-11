@@ -50,7 +50,7 @@ function ReservationTable() {
   if (loading) return <p>Načítavam rezervácie...</p>;
 
   return (
-    <div style={{ marginTop: "30px" }}>
+    <div style={{ marginTop: "30px", marginBottom: "50px" }}>
       <h3>📋 Zoznam rezervácií</h3>
       <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "10px" }}>
         <thead>
@@ -84,9 +84,7 @@ function ReservationTable() {
                 <button
                   onClick={() => deleteReservation(res.reservationId)}
                   style={{ marginLeft: "8px", color: "red" }}
-                >
-                  Zmazať
-                </button>
+                >Zmazať</button>
               </td>
             </tr>
           ))}
@@ -103,7 +101,7 @@ const cellStyle = {
     whiteSpace: "nowrap",          // Zabraňuje zalomeniu textu
     overflow: "hidden",
     textOverflow: "ellipsis",      // Pridá ... ak je text príliš dlhý
-    maxWidth: "200px",             // Limituje príliš dlhý text
+    maxWidth: "300px",             // Limituje príliš dlhý text
   };
 
 export default ReservationTable;
