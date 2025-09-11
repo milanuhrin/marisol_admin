@@ -1,8 +1,10 @@
+// AdminPanel.jsx
 import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import "./App.css"; // Import styles
+import ReservationTable from "./ReservationTable";
 
 const API_URL = "https://eb8ya8rtoc.execute-api.us-east-1.amazonaws.com/main/availability";
 
@@ -186,6 +188,8 @@ function AdminPanel({ signOut }) {
           Voľný
         </div>
       </div>
+    {/* 📋 Rezervácie z Availability_v2 */}
+    <ReservationTable />
     </div>
   );
 }
