@@ -48,6 +48,31 @@ function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, su
         Poznámka
         <input name="info" defaultValue={initialData.info || ""} />
       </label>
+      <label>
+        Depozit
+        <input name="deposit" defaultValue={initialData.deposit || ""} type="number" step="0.01" />
+      </label>
+      <label>
+        Záloha
+        <input name="advance" defaultValue={initialData.advance || ""} type="number" step="0.01" />
+      </label>
+      <label>
+        Doplatok
+        <input name="remaining" defaultValue={initialData.remaining || ""} type="number" step="0.01" />
+      </label>
+      <label>
+        Spolu bez depozitu
+        <input
+          name="total"
+          type="number"
+          step="0.01"
+          readOnly
+          value={(
+            (parseFloat(initialData.deposit || 0) || 0) +
+            (parseFloat(initialData.advance || 0) || 0)
+          ).toFixed(2)}
+        />
+      </label>
       <button type="submit" style={{ padding: "10px", backgroundColor: submitColor, color: "white", border: "none" }}>
         {submitLabel}
       </button>
@@ -68,6 +93,10 @@ ReservationForm.propTypes = {
     checkOutTime: PropTypes.string,
     platform: PropTypes.string,
     info: PropTypes.string,
+    deposit: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    advance: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    remaining: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    total: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   }),
   onSubmit: PropTypes.func.isRequired,
   onCancel: PropTypes.func.isRequired,
@@ -172,6 +201,10 @@ function ReservationTable() {
                 checkOutTime: form.checkOutTime.value,
                 platform: form.platform.value,
                 info: form.info.value,
+                deposit: parseFloat(form.deposit.value) || 0,
+                advance: parseFloat(form.advance.value) || 0,
+                remaining: parseFloat(form.remaining.value) || 0,
+                total: parseFloat(form.total.value) || 0,
               };
               Object.keys(newReservation).forEach((key) => newReservation[key] === "" && delete newReservation[key]);
               try {
@@ -217,6 +250,10 @@ function ReservationTable() {
                 checkOutTime: form.checkOutTime.value,
                 platform: form.platform.value,
                 info: form.info.value,
+                deposit: parseFloat(form.deposit.value) || 0,
+                advance: parseFloat(form.advance.value) || 0,
+                remaining: parseFloat(form.remaining.value) || 0,
+                total: parseFloat(form.total.value) || 0,
               };
               Object.keys(updatedReservation).forEach((key) => updatedReservation[key] === "" && delete updatedReservation[key]);
               try {
