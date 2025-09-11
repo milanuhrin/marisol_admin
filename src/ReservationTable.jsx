@@ -33,7 +33,9 @@ function ReservationTable() {
       });
       const result = await response.json();
       if (result.success) {
-        await fetchReservations();
+        setReservations((prev) =>
+          prev.filter((r) => r.reservationId !== reservationId)
+        );
         alert("Rezervácia bola úspešne vymazaná.");
       } else {
         alert("Nepodarilo sa vymazať rezerváciu.");
