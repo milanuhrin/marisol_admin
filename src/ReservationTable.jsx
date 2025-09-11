@@ -145,7 +145,9 @@ function ReservationTable() {
                 <button
                   onClick={() => deleteReservation(res.reservationId)}
                   style={{ marginLeft: "8px", color: "red" }}
-                >Zmazať</button>
+                >
+                  Zmazať
+                </button>
               </td>
             </tr>
           ))}
