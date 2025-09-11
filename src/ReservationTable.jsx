@@ -37,6 +37,7 @@ function ReservationTable() {
           prev.filter((r) => r.reservationId !== reservationId)
         );
         alert("Rezervácia bola úspešne vymazaná.");
+        await fetchReservations();
       } else {
         alert("Nepodarilo sa vymazať rezerváciu.");
       }
