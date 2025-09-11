@@ -38,8 +38,16 @@ function ReservationTable() {
       });
 
       console.log("🔄 Response received:", response);
-      const result = await response.json();
-      console.log("📦 JSON result:", result);
+      const text = await response.text();
+      console.log("📦 Raw response text:", text);
+      let result;
+      try {
+        result = JSON.parse(text);
+      } catch (e) {
+        console.error("❌ Failed to parse JSON:", e);
+        alert("Neplatná odpoveď zo servera.");
+        return;
+      }
 
       if (result.success) {
         setReservations((prev) =>
