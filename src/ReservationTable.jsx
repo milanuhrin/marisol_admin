@@ -80,12 +80,12 @@ function ReservationTable() {
               </td>
               <td style={cellStyle}>{res.info}</td>
               <td style={cellStyle}>
-                <button onClick={() => alert("🛠 Tu bude edit formulár")}>✏️ Upraviť</button>
+                <button onClick={() => alert("🛠 Tu bude edit formulár")}>Upraviť</button>
                 <button
                   onClick={() => deleteReservation(res.reservationId)}
                   style={{ marginLeft: "8px", color: "red" }}
                 >
-                  ❌ Zmazať
+                  Zmazať
                 </button>
               </td>
             </tr>
@@ -97,9 +97,13 @@ function ReservationTable() {
 }
 
 const cellStyle = {
-  padding: "8px",
-  border: "1px solid #ccc",
-  textAlign: "left",
-};
+    padding: "10px",
+    border: "1px solid #ccc",
+    textAlign: "left",
+    whiteSpace: "nowrap",          // Zabraňuje zalomeniu textu
+    overflow: "hidden",
+    textOverflow: "ellipsis",      // Pridá ... ak je text príliš dlhý
+    maxWidth: "200px",             // Limituje príliš dlhý text
+  };
 
 export default ReservationTable;
