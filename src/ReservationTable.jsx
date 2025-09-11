@@ -9,7 +9,7 @@ function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, su
   const [deposit, setDeposit] = useState(parseFloat(initialData.deposit) || 0);
   const [advance, setAdvance] = useState(parseFloat(initialData.advance) || 0);
   const [remaining, setRemaining] = useState(parseFloat(initialData.remaining) || 0);
-  const total = (advance + remaining).toFixed(2);
+  const total = (deposit + advance + remaining).toFixed(2);
 
   return (
     <form
@@ -55,15 +55,15 @@ function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, su
       </label>
       <label>
         Depozit
-        <input name="deposit" type="number" step="0.01" value={isNaN(deposit) ? "" : deposit} onChange={e => setDeposit(parseFloat(e.target.value) || 0)} />
+        <input name="deposit" type="number" step="0.01" value={isNaN(deposit) || deposit === 0 ? "" : deposit} onChange={e => setDeposit(parseFloat(e.target.value) || 0)} />
       </label>
       <label>
         Záloha
-        <input name="advance" type="number" step="0.01" value={isNaN(advance) ? "" : advance} onChange={e => setAdvance(parseFloat(e.target.value) || 0)} />
+        <input name="advance" type="number" step="0.01" value={isNaN(advance) || advance === 0 ? "" : advance} onChange={e => setAdvance(parseFloat(e.target.value) || 0)} />
       </label>
       <label>
         Doplatok
-        <input name="remaining" type="number" step="0.01" value={isNaN(remaining) ? "" : remaining} onChange={e => setRemaining(parseFloat(e.target.value) || 0)} />
+        <input name="remaining" type="number" step="0.01" value={isNaN(remaining) || remaining === 0 ? "" : remaining} onChange={e => setRemaining(parseFloat(e.target.value) || 0)} />
       </label>
       <label>
         Spolu bez depozitu
@@ -117,6 +117,7 @@ function ReservationTable() {
       const response = await fetch(API_URL);
       const data = await response.json();
       if (data.success) {
+        console.log("Fetched reservations:", data.reservations);
         setReservations(data.reservations);
       } else {
         console.error("⚠️ Unexpected response:", data);
@@ -203,12 +204,20 @@ function ReservationTable() {
                 checkOutTime: form.checkOutTime.value,
                 platform: form.platform.value,
                 info: form.info.value,
-                deposit: isNaN(parseFloat(form.deposit.value)) || form.deposit.value === "" ? undefined : parseFloat(form.deposit.value),
-                advance: isNaN(parseFloat(form.advance.value)) || form.advance.value === "" ? undefined : parseFloat(form.advance.value),
-                remaining: isNaN(parseFloat(form.remaining.value)) || form.remaining.value === "" ? undefined : parseFloat(form.remaining.value),
-                total: isNaN(parseFloat(form.total.value)) || form.total.value === "" ? undefined : parseFloat(form.total.value),
+                deposit: isNaN(parseFloat(form.deposit.value)) ? undefined : parseFloat(form.deposit.value),
+                advance: isNaN(parseFloat(form.advance.value)) ? undefined : parseFloat(form.advance.value),
+                remaining: isNaN(parseFloat(form.remaining.value)) ? undefined : parseFloat(form.remaining.value),
+                total: isNaN(parseFloat(form.total.value)) ? undefined : parseFloat(form.total.value),
               };
-              Object.keys(newReservation).forEach((key) => newReservation[key] === "" && delete newReservation[key]);
+              Object.keys(newReservation).forEach(key => {
+                if (
+                  newReservation[key] === "" ||
+                  newReservation[key] === undefined ||
+                  (typeof newReservation[key] === "number" && isNaN(newReservation[key]))
+                ) {
+                  delete newReservation[key];
+                }
+              });
               try {
                 const response = await fetch(API_URL, {
                   method: "POST",
@@ -252,12 +261,20 @@ function ReservationTable() {
                 checkOutTime: form.checkOutTime.value,
                 platform: form.platform.value,
                 info: form.info.value,
-                deposit: isNaN(parseFloat(form.deposit.value)) || form.deposit.value === "" ? undefined : parseFloat(form.deposit.value),
-                advance: isNaN(parseFloat(form.advance.value)) || form.advance.value === "" ? undefined : parseFloat(form.advance.value),
-                remaining: isNaN(parseFloat(form.remaining.value)) || form.remaining.value === "" ? undefined : parseFloat(form.remaining.value),
-                total: isNaN(parseFloat(form.total.value)) || form.total.value === "" ? undefined : parseFloat(form.total.value),
+                deposit: isNaN(parseFloat(form.deposit.value)) ? undefined : parseFloat(form.deposit.value),
+                advance: isNaN(parseFloat(form.advance.value)) ? undefined : parseFloat(form.advance.value),
+                remaining: isNaN(parseFloat(form.remaining.value)) ? undefined : parseFloat(form.remaining.value),
+                total: isNaN(parseFloat(form.total.value)) ? undefined : parseFloat(form.total.value),
               };
-              Object.keys(updatedReservation).forEach((key) => updatedReservation[key] === "" && delete updatedReservation[key]);
+              Object.keys(updatedReservation).forEach(key => {
+                if (
+                  updatedReservation[key] === "" ||
+                  updatedReservation[key] === undefined ||
+                  (typeof updatedReservation[key] === "number" && isNaN(updatedReservation[key]))
+                ) {
+                  delete updatedReservation[key];
+                }
+              });
               try {
                 const response = await fetch(`${API_URL}/${editReservation.reservationId}`, {
                   method: "PUT",
