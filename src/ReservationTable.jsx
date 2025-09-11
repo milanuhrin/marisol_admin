@@ -5,6 +5,7 @@ const API_URL = "https://eb8ya8rtoc.execute-api.us-east-1.amazonaws.com/main/res
 function ReservationTable() {
   const [reservations, setReservations] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
 
   const fetchReservations = async () => {
     try {
@@ -52,6 +53,66 @@ function ReservationTable() {
   return (
     <div style={{ marginTop: "30px", marginBottom: "50px" }}>
       <h3>📋 Zoznam rezervácií</h3>
+      <button onClick={() => setShowForm(!showForm)} style={{ marginBottom: "20px" }}>
+        {showForm ? "Skryť formulár" : "➕ Nová rezervácia"}
+      </button>
+      {showForm && (
+        <form
+          onSubmit={async (e) => {
+            e.preventDefault();
+            const form = e.target;
+            const newReservation = {
+              startDate: form.startDate.value,
+              endDate: form.endDate.value,
+              guestName: form.guestName.value,
+              guestContact: form.guestContact.value,
+              checkInTime: form.checkInTime.value,
+              checkOutTime: form.checkOutTime.value,
+              platform: form.platform.value,
+              info: form.info.value,
+            };
+
+            try {
+              const response = await fetch(API_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(newReservation),
+              });
+
+              const result = await response.json();
+              if (result.success) {
+                fetchReservations(); // Refresh
+                form.reset();
+                setShowForm(false);
+                alert("Rezervácia bola pridaná.");
+              } else {
+                alert("Chyba pri vytváraní rezervácie.");
+              }
+            } catch (err) {
+              console.error("❌ Submit error:", err);
+              alert("Chyba siete.");
+            }
+          }}
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+            gap: "10px",
+            marginBottom: "20px",
+          }}
+        >
+          <input name="startDate" type="date" required placeholder="Dátum od" />
+          <input name="endDate" type="date" required placeholder="Dátum do" />
+          <input name="guestName" required placeholder="Meno hosťa" />
+          <input name="guestContact" required placeholder="Kontakt" />
+          <input name="checkInTime" placeholder="Check-in (napr. 14:00)" />
+          <input name="checkOutTime" placeholder="Check-out (napr. 10:00)" />
+          <input name="platform" placeholder="Platforma (napr. AirBnB)" />
+          <input name="info" placeholder="Poznámka" />
+          <button type="submit" style={{ gridColumn: "span 2", padding: "10px", backgroundColor: "#007bff", color: "white", border: "none" }}>
+            Uložiť rezerváciu
+          </button>
+        </form>
+      )}
       <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "10px" }}>
         <thead>
           <tr style={{ background: "#f0f0f0" }}>
