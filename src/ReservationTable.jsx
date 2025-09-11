@@ -1,4 +1,5 @@
 // ReservationTable.jsx
+
 import { useEffect, useState } from "react";
 
 const API_URL = "https://eb8ya8rtoc.execute-api.us-east-1.amazonaws.com/main/reservation";
@@ -33,7 +34,7 @@ function ReservationTable() {
 
     try {
       console.log("➡️ Entering deleteReservation try block for:", reservationId);
-      const response = await fetch(`${API_URL}/${encodeURIComponent(reservationId)}`, {
+      const response = await fetch(`${API_URL}/${reservationId}`, {
         method: "DELETE",
       });
 
@@ -84,7 +85,9 @@ function ReservationTable() {
           onSubmit={async (e) => {
             e.preventDefault();
             const form = e.target;
+            const reservationId = `RES${form.startDate.value.replaceAll("-", "")}`;
             const newReservation = {
+              reservationId,
               startDate: form.startDate.value,
               endDate: form.endDate.value,
               guestName: form.guestName.value,
