@@ -42,6 +42,7 @@ function ReservationTable() {
       }
     } catch (error) {
       console.error("❌ Delete error:", error);
+      alert("Chyba siete pri mazaní rezervácie.");
     }
   };
 
