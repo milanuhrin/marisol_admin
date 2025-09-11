@@ -76,7 +76,7 @@ function ReservationTable() {
 
   return (
     <div style={{ marginTop: "30px", marginBottom: "50px" }}>
-      <h3>📋 Zoznam rezervácií</h3>
+      <h3>Zoznam rezervácií</h3>
       <button onClick={() => setShowForm(!showForm)} style={{ marginBottom: "20px" }}>
         {showForm ? "Skryť formulár" : "➕ Nová rezervácia"}
       </button>
@@ -189,17 +189,46 @@ function ReservationTable() {
             gap: "10px",
             marginBottom: "20px",
             border: "2px solid orange",
-            padding: "10px",
+            padding: "20px",
+            maxWidth: "1000px",
+            marginLeft: "auto",
+            marginRight: "auto",
+            borderRadius: "8px",
+            backgroundColor: "#fff",
           }}
         >
-          <input name="startDate" type="date" defaultValue={editReservation.startDate} required />
-          <input name="endDate" type="date" defaultValue={editReservation.endDate} required />
-          <input name="guestName" defaultValue={editReservation.guestName} required />
-          <input name="guestContact" defaultValue={editReservation.guestContact || ""} />
-          <input name="checkInTime" defaultValue={editReservation.checkInTime || ""} />
-          <input name="checkOutTime" defaultValue={editReservation.checkOutTime || ""} />
-          <input name="platform" defaultValue={editReservation.platform || ""} />
-          <input name="info" defaultValue={editReservation.info || ""} />
+          <label>
+            Dátum od
+            <input name="startDate" type="date" defaultValue={editReservation.startDate} required />
+          </label>
+          <label>
+            Dátum do
+            <input name="endDate" type="date" defaultValue={editReservation.endDate} required />
+          </label>
+          <label>
+            Meno hosťa
+            <input name="guestName" defaultValue={editReservation.guestName} required />
+          </label>
+          <label>
+            Kontakt
+            <input name="guestContact" defaultValue={editReservation.guestContact || ""} />
+          </label>
+          <label>
+            Check-in
+            <input name="checkInTime" defaultValue={editReservation.checkInTime || ""} />
+          </label>
+          <label>
+            Check-out
+            <input name="checkOutTime" defaultValue={editReservation.checkOutTime || ""} />
+          </label>
+          <label>
+            Platforma
+            <input name="platform" defaultValue={editReservation.platform || ""} />
+          </label>
+          <label>
+            Poznámka
+            <input name="info" defaultValue={editReservation.info || ""} />
+          </label>
           <button type="submit" style={{ gridColumn: "span 2", padding: "10px", backgroundColor: "orange", color: "white", border: "none" }}>
             Uložiť zmeny
           </button>
