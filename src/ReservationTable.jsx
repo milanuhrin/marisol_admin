@@ -100,6 +100,7 @@ function ReservationTable() {
             );
 
             try {
+              console.log("📤 Sending new reservation:", newReservation);
               const response = await fetch(API_URL, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
