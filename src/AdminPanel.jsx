@@ -116,7 +116,7 @@ function AdminPanel({ signOut }) {
         onClick={() => {
           signOut();
           setTimeout(() => {
-            window.location.href = "https://dznnrbng6qb50.cloudfront.net/";
+            window.location.href = "https://marisol.sk/";
           }, 1000); // Small delay to ensure logout completes
         }}
       >
