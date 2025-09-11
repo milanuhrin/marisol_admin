@@ -1,3 +1,4 @@
+// ReservationTable.jsx
 import { useEffect, useState } from "react";
 
 const API_URL = "https://eb8ya8rtoc.execute-api.us-east-1.amazonaws.com/main/reservation";
@@ -72,6 +73,10 @@ function ReservationTable() {
               platform: form.platform.value,
               info: form.info.value,
             };
+            // Remove empty fields before sending
+            Object.keys(newReservation).forEach(
+              (key) => newReservation[key] === "" && delete newReservation[key]
+            );
 
             try {
               const response = await fetch(API_URL, {
