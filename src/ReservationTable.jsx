@@ -73,11 +73,11 @@ function ReservationTable() {
     fetchReservations();
   }, []);
 
-  if (loading) return <p>Načítavam rezervácie...</p>;
+  if (loading) return <p>Načítavam rezervácie</p>;
 
   return (
     <div style={{ marginTop: "30px", marginBottom: "50px" }}>
-      <h3>Zoznam rezervácií</h3>
+      <h3>Rezervácie</h3>
       <button onClick={() => setShowForm(!showForm)} style={{ marginBottom: "20px" }}>
         {showForm ? "Skryť formulár" : "➕ Nová rezervácia"}
       </button>
@@ -143,7 +143,7 @@ function ReservationTable() {
               <input name="endDate" type="date" required />
             </label>
             <label>
-              Meno hosťa
+              Meno
               <input name="guestName" required />
             </label>
             <label>
@@ -230,7 +230,7 @@ function ReservationTable() {
               <input name="endDate" type="date" defaultValue={editReservation.endDate} required />
             </label>
             <label>
-              Meno hosťa
+              Meno
               <input name="guestName" defaultValue={editReservation.guestName} required />
             </label>
             <label>
@@ -319,12 +319,32 @@ const cellStyle = {
 
 function Modal({ children, onClose }) {
   return (
-    <div style={overlayStyle} onClick={onClose}>
-      <div style={modalStyle} onClick={e => e.stopPropagation()}>
-        <button onClick={onClose} style={closeButtonStyle} aria-label="Close modal">×</button>
-        {children}
+    <>
+      <style>{`
+        form label {
+          display: flex;
+          flex-direction: column;
+          font-weight: bold;
+          font-size: 14px;
+        }
+
+        form input {
+          width: 100%;
+          box-sizing: border-box;
+          padding: 6px 8px;
+          margin-top: 4px;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          font-size: 14px;
+        }
+      `}</style>
+      <div style={overlayStyle} onClick={onClose}>
+        <div style={modalStyle} onClick={e => e.stopPropagation()}>
+          <button onClick={onClose} style={closeButtonStyle} aria-label="Close modal">×</button>
+          {children}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
