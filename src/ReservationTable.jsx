@@ -33,7 +33,7 @@ function ReservationTable() {
 
     try {
       console.log("➡️ Entering deleteReservation try block for:", reservationId);
-      const response = await fetch(`${API_URL}/${reservationId}`, {
+      const response = await fetch(`${API_URL}/${encodeURIComponent(reservationId)}`, {
         method: "DELETE",
       });
 
