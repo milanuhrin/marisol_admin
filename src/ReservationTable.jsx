@@ -8,6 +8,7 @@ function ReservationTable() {
   const [reservations, setReservations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
+  const [editReservation, setShowEditForm] = useState(null);
 
   const fetchReservations = async () => {
     try {
@@ -145,6 +146,69 @@ function ReservationTable() {
         </form>
       )}
 
+      {editReservation && (
+        <form
+          onSubmit={async (e) => {
+            e.preventDefault();
+            const form = e.target;
+            const updatedReservation = {
+              startDate: form.startDate.value,
+              endDate: form.endDate.value,
+              guestName: form.guestName.value,
+              guestContact: form.guestContact.value,
+              checkInTime: form.checkInTime.value,
+              checkOutTime: form.checkOutTime.value,
+              platform: form.platform.value,
+              info: form.info.value,
+            };
+            Object.keys(updatedReservation).forEach(
+              (key) => updatedReservation[key] === "" && delete updatedReservation[key]
+            );
+            try {
+              const response = await fetch(`${API_URL}/${editReservation.reservationId}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(updatedReservation),
+              });
+              const result = await response.json();
+              if (result.success) {
+                fetchReservations(); // refresh list
+                setShowEditForm(null); // close form
+                alert("Rezervácia bola upravená.");
+              } else {
+                alert("Chyba pri úprave rezervácie.");
+              }
+            } catch (err) {
+              console.error("❌ Edit error:", err);
+              alert("Chyba siete.");
+            }
+          }}
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+            gap: "10px",
+            marginBottom: "20px",
+            border: "2px solid orange",
+            padding: "10px",
+          }}
+        >
+          <input name="startDate" type="date" defaultValue={editReservation.startDate} required />
+          <input name="endDate" type="date" defaultValue={editReservation.endDate} required />
+          <input name="guestName" defaultValue={editReservation.guestName} required />
+          <input name="guestContact" defaultValue={editReservation.guestContact || ""} />
+          <input name="checkInTime" defaultValue={editReservation.checkInTime || ""} />
+          <input name="checkOutTime" defaultValue={editReservation.checkOutTime || ""} />
+          <input name="platform" defaultValue={editReservation.platform || ""} />
+          <input name="info" defaultValue={editReservation.info || ""} />
+          <button type="submit" style={{ gridColumn: "span 2", padding: "10px", backgroundColor: "orange", color: "white", border: "none" }}>
+            Uložiť zmeny
+          </button>
+          <button type="button" onClick={() => setShowEditForm(null)} style={{ gridColumn: "span 2", padding: "10px" }}>
+            Zrušiť
+          </button>
+        </form>
+      )}
+
       <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "10px" }}>
         <thead>
           <tr style={{ background: "#f0f0f0" }}>
@@ -173,7 +237,7 @@ function ReservationTable() {
               </td>
               <td style={cellStyle}>{res.info}</td>
               <td style={cellStyle}>
-                <button onClick={() => alert("🛠 Tu bude edit formulár")}>Upraviť</button>
+                <button onClick={() => setShowEditForm(res)}>Upraviť</button>
                 <button
                   onClick={() => deleteReservation(res.reservationId)}
                   style={{ marginLeft: "8px", color: "red" }}
