@@ -147,7 +147,7 @@ function ReservationTable() {
 
   return (
     <div style={{ marginTop: "30px", marginBottom: "50px" }}>
-      <h3>Rezervácie</h3>
+      <h3>Zoznam rezervácií</h3>
       <button onClick={() => setShowForm(!showForm)} style={{ marginBottom: "20px" }}>
         {showForm ? "Skryť formulár" : "➕ Nová rezervácia"}
       </button>
