@@ -6,7 +6,8 @@ import "react-calendar/dist/Calendar.css";
 import "./App.css"; // Import styles
 import ReservationTable from "./ReservationTable";
 
-const API_URL = "https://eb8ya8rtoc.execute-api.us-east-1.amazonaws.com/main/availability";
+// const API_URL = "https://eb8ya8rtoc.execute-api.us-east-1.amazonaws.com/main/availability";
+const API_URL = "https://eb8ya8rtoc.execute-api.us-east-1.amazonaws.com/main/reservation";
 
 // ✅ Ensure dates are always stored in UTC format
 const formatDate = (date) => {
