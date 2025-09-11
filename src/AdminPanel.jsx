@@ -126,7 +126,7 @@ function AdminPanel({ signOut }) {
         Logout
       </button>
 
-      <h2>Admin Panel</h2>
+      <h2>Administracia</h2>
 
       {/* 📋 Rezervácie z Availability_v2 */}
       <ReservationTable />
