@@ -5,6 +5,76 @@ import PropTypes from 'prop-types';
 
 const API_URL = "https://eb8ya8rtoc.execute-api.us-east-1.amazonaws.com/main/reservation";
 
+function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, submitColor }) {
+  return (
+    <form
+      onSubmit={onSubmit}
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: "10px",
+        marginBottom: "20px",
+      }}
+    >
+      <label>
+        Dátum od
+        <input name="startDate" type="date" defaultValue={initialData.startDate || ""} required />
+      </label>
+      <label>
+        Dátum do
+        <input name="endDate" type="date" defaultValue={initialData.endDate || ""} required />
+      </label>
+      <label>
+        Meno
+        <input name="guestName" defaultValue={initialData.guestName || ""} required />
+      </label>
+      <label>
+        Kontakt
+        <input name="guestContact" defaultValue={initialData.guestContact || ""} />
+      </label>
+      <label>
+        Check-in
+        <input name="checkInTime" defaultValue={initialData.checkInTime || ""} placeholder="napr. 14:00" />
+      </label>
+      <label>
+        Check-out
+        <input name="checkOutTime" defaultValue={initialData.checkOutTime || ""} placeholder="napr. 10:00" />
+      </label>
+      <label>
+        Platforma
+        <input name="platform" defaultValue={initialData.platform || ""} placeholder="napr. AirBnB" />
+      </label>
+      <label>
+        Poznámka
+        <input name="info" defaultValue={initialData.info || ""} />
+      </label>
+      <button type="submit" style={{ padding: "10px", backgroundColor: submitColor, color: "white", border: "none" }}>
+        {submitLabel}
+      </button>
+      <button type="button" onClick={onCancel} style={{ padding: "10px" }}>
+        Zrušiť
+      </button>
+    </form>
+  );
+}
+
+ReservationForm.propTypes = {
+  initialData: PropTypes.shape({
+    startDate: PropTypes.string,
+    endDate: PropTypes.string,
+    guestName: PropTypes.string,
+    guestContact: PropTypes.string,
+    checkInTime: PropTypes.string,
+    checkOutTime: PropTypes.string,
+    platform: PropTypes.string,
+    info: PropTypes.string,
+  }),
+  onSubmit: PropTypes.func.isRequired,
+  onCancel: PropTypes.func.isRequired,
+  submitLabel: PropTypes.string.isRequired,
+  submitColor: PropTypes.string.isRequired,
+}
+
 function ReservationTable() {
   const [reservations, setReservations] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -84,7 +154,10 @@ function ReservationTable() {
 
       {showForm && (
         <Modal onClose={() => setShowForm(false)}>
-          <form
+          <ReservationForm
+            submitLabel="Uložiť rezerváciu"
+            submitColor="#007bff"
+            onCancel={() => setShowForm(false)}
             onSubmit={async (e) => {
               e.preventDefault();
               const form = e.target;
@@ -100,22 +173,16 @@ function ReservationTable() {
                 platform: form.platform.value,
                 info: form.info.value,
               };
-              // Remove empty fields before sending
-              Object.keys(newReservation).forEach(
-                (key) => newReservation[key] === "" && delete newReservation[key]
-              );
-
+              Object.keys(newReservation).forEach((key) => newReservation[key] === "" && delete newReservation[key]);
               try {
-                console.log("📤 Sending new reservation:", newReservation);
                 const response = await fetch(API_URL, {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
                   body: JSON.stringify(newReservation),
                 });
-
                 const result = await response.json();
                 if (result.success) {
-                  fetchReservations(); // Refresh
+                  fetchReservations();
                   form.reset();
                   setShowForm(false);
                   alert("Rezervácia bola pridaná.");
@@ -127,58 +194,17 @@ function ReservationTable() {
                 alert("Chyba siete.");
               }
             }}
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "10px",
-              marginBottom: "20px",
-            }}
-          >
-            <label>
-              Dátum od
-              <input name="startDate" type="date" required />
-            </label>
-            <label>
-              Dátum do
-              <input name="endDate" type="date" required />
-            </label>
-            <label>
-              Meno
-              <input name="guestName" required />
-            </label>
-            <label>
-              Kontakt
-              <input name="guestContact" />
-            </label>
-            <label>
-              Check-in
-              <input name="checkInTime" placeholder="napr. 14:00" />
-            </label>
-            <label>
-              Check-out
-              <input name="checkOutTime" placeholder="napr. 10:00" />
-            </label>
-            <label>
-              Platforma
-              <input name="platform" placeholder="napr. AirBnB" />
-            </label>
-            <label>
-              Poznámka
-              <input name="info" />
-            </label>
-            <button type="submit" style={{ padding: "10px", backgroundColor: "#007bff", color: "white", border: "none" }}>
-              Uložiť rezerváciu
-            </button>
-            <button type="button" onClick={() => setShowForm(false)} style={{ padding: "10px" }}>
-              Zrušiť
-            </button>
-          </form>
+          />
         </Modal>
       )}
 
       {editReservation && (
         <Modal onClose={() => setShowEditForm(null)}>
-          <form
+          <ReservationForm
+            initialData={editReservation}
+            submitLabel="Uložiť zmeny"
+            submitColor="orange"
+            onCancel={() => setShowEditForm(null)}
             onSubmit={async (e) => {
               e.preventDefault();
               const form = e.target;
@@ -192,9 +218,7 @@ function ReservationTable() {
                 platform: form.platform.value,
                 info: form.info.value,
               };
-              Object.keys(updatedReservation).forEach(
-                (key) => updatedReservation[key] === "" && delete updatedReservation[key]
-              );
+              Object.keys(updatedReservation).forEach((key) => updatedReservation[key] === "" && delete updatedReservation[key]);
               try {
                 const response = await fetch(`${API_URL}/${editReservation.reservationId}`, {
                   method: "PUT",
@@ -203,8 +227,8 @@ function ReservationTable() {
                 });
                 const result = await response.json();
                 if (result.success) {
-                  fetchReservations(); // refresh list
-                  setShowEditForm(null); // close form
+                  fetchReservations();
+                  setShowEditForm(null);
                   alert("Rezervácia bola upravená.");
                 } else {
                   alert("Chyba pri úprave rezervácie.");
@@ -214,52 +238,7 @@ function ReservationTable() {
                 alert("Chyba siete.");
               }
             }}
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-              gap: "10px",
-              marginBottom: "20px",
-            }}
-          >
-            <label>
-              Dátum od
-              <input name="startDate" type="date" defaultValue={editReservation.startDate} required />
-            </label>
-            <label>
-              Dátum do
-              <input name="endDate" type="date" defaultValue={editReservation.endDate} required />
-            </label>
-            <label>
-              Meno
-              <input name="guestName" defaultValue={editReservation.guestName} required />
-            </label>
-            <label>
-              Kontakt
-              <input name="guestContact" defaultValue={editReservation.guestContact || ""} />
-            </label>
-            <label>
-              Check-in
-              <input name="checkInTime" defaultValue={editReservation.checkInTime || ""} />
-            </label>
-            <label>
-              Check-out
-              <input name="checkOutTime" defaultValue={editReservation.checkOutTime || ""} />
-            </label>
-            <label>
-              Platforma
-              <input name="platform" defaultValue={editReservation.platform || ""} />
-            </label>
-            <label>
-              Poznámka
-              <input name="info" defaultValue={editReservation.info || ""} />
-            </label>
-            <button type="submit" style={{ gridColumn: "span 2", padding: "10px", backgroundColor: "orange", color: "white", border: "none" }}>
-              Uložiť zmeny
-            </button>
-            <button type="button" onClick={() => setShowEditForm(null)} style={{ gridColumn: "span 2", padding: "10px" }}>
-              Zrušiť
-            </button>
-          </form>
+          />
         </Modal>
       )}
 
