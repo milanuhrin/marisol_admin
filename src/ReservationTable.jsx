@@ -109,7 +109,7 @@ function ReservationTable() {
           <input name="startDate" type="date" required placeholder="Dátum od" />
           <input name="endDate" type="date" required placeholder="Dátum do" />
           <input name="guestName" required placeholder="Meno hosťa" />
-          <input name="guestContact" required placeholder="Kontakt" />
+          <input name="guestContact" placeholder="Kontakt" />
           <input name="checkInTime" placeholder="Check-in (napr. 14:00)" />
           <input name="checkOutTime" placeholder="Check-out (napr. 10:00)" />
           <input name="platform" placeholder="Platforma (napr. AirBnB)" />
