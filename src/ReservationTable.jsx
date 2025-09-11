@@ -25,24 +25,36 @@ function ReservationTable() {
   };
 
   const deleteReservation = async (reservationId) => {
-    if (!window.confirm(`Naozaj chceš vymazať rezerváciu ${reservationId}?`)) return;
+    console.log("🗑 Attempting to delete reservation:", reservationId);
+    if (!window.confirm(`Naozaj chceš vymazať rezerváciu ${reservationId}?`)) {
+      console.log("❌ Deletion cancelled by user.");
+      return;
+    }
 
     try {
+      console.log("➡️ Entering deleteReservation try block for:", reservationId);
       const response = await fetch(`${API_URL}/${reservationId}`, {
         method: "DELETE",
       });
+
+      console.log("🔄 Response received:", response);
       const result = await response.json();
+      console.log("📦 JSON result:", result);
+
       if (result.success) {
         setReservations((prev) =>
           prev.filter((r) => r.reservationId !== reservationId)
         );
         alert("Rezervácia bola úspešne vymazaná.");
+        console.log("✅ Reservation deleted successfully.");
       } else {
         alert("Nepodarilo sa vymazať rezerváciu.");
+        console.log("⚠️ Deletion failed, result.success is false.");
       }
     } catch (error) {
       console.error("❌ Delete error:", error);
       alert("Chyba siete pri mazaní rezervácie.");
+      console.log("⚠️ Alerted user about network error during deletion.");
     }
   };
 
