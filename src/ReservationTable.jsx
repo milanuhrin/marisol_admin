@@ -8,7 +8,8 @@ const API_URL = "https://eb8ya8rtoc.execute-api.us-east-1.amazonaws.com/main/res
 function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, submitColor }) {
   const [deposit, setDeposit] = useState(parseFloat(initialData.deposit) || 0);
   const [advance, setAdvance] = useState(parseFloat(initialData.advance) || 0);
-  const total = (deposit + advance).toFixed(2);
+  const [remaining, setRemaining] = useState(parseFloat(initialData.remaining) || 0);
+  const total = (deposit + advance + remaining).toFixed(2);
 
   return (
     <form
@@ -54,15 +55,15 @@ function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, su
       </label>
       <label>
         Depozit
-        <input name="deposit" type="number" step="0.01" value={deposit} onChange={e => setDeposit(parseFloat(e.target.value) || 0)} />
+        <input name="deposit" type="number" step="0.01" value={isNaN(deposit) ? "" : deposit} onChange={e => setDeposit(parseFloat(e.target.value) || 0)} />
       </label>
       <label>
         Záloha
-        <input name="advance" type="number" step="0.01" value={advance} onChange={e => setAdvance(parseFloat(e.target.value) || 0)} />
+        <input name="advance" type="number" step="0.01" value={isNaN(advance) ? "" : advance} onChange={e => setAdvance(parseFloat(e.target.value) || 0)} />
       </label>
       <label>
         Doplatok
-        <input name="remaining" defaultValue={initialData.remaining || ""} type="number" step="0.01" />
+        <input name="remaining" type="number" step="0.01" value={isNaN(remaining) ? "" : remaining} onChange={e => setRemaining(parseFloat(e.target.value) || 0)} />
       </label>
       <label>
         Spolu bez depozitu
@@ -202,10 +203,10 @@ function ReservationTable() {
                 checkOutTime: form.checkOutTime.value,
                 platform: form.platform.value,
                 info: form.info.value,
-                deposit: parseFloat(form.deposit.value) || 0,
-                advance: parseFloat(form.advance.value) || 0,
-                remaining: parseFloat(form.remaining.value) || 0,
-                total: parseFloat(form.total.value) || 0,
+                deposit: isNaN(parseFloat(form.deposit.value)) ? undefined : parseFloat(form.deposit.value),
+                advance: isNaN(parseFloat(form.advance.value)) ? undefined : parseFloat(form.advance.value),
+                remaining: isNaN(parseFloat(form.remaining.value)) ? undefined : parseFloat(form.remaining.value),
+                total: isNaN(parseFloat(form.total.value)) ? undefined : parseFloat(form.total.value),
               };
               Object.keys(newReservation).forEach((key) => newReservation[key] === "" && delete newReservation[key]);
               try {
@@ -251,10 +252,10 @@ function ReservationTable() {
                 checkOutTime: form.checkOutTime.value,
                 platform: form.platform.value,
                 info: form.info.value,
-                deposit: parseFloat(form.deposit.value) || 0,
-                advance: parseFloat(form.advance.value) || 0,
-                remaining: parseFloat(form.remaining.value) || 0,
-                total: parseFloat(form.total.value) || 0,
+                deposit: isNaN(parseFloat(form.deposit.value)) ? undefined : parseFloat(form.deposit.value),
+                advance: isNaN(parseFloat(form.advance.value)) ? undefined : parseFloat(form.advance.value),
+                remaining: isNaN(parseFloat(form.remaining.value)) ? undefined : parseFloat(form.remaining.value),
+                total: isNaN(parseFloat(form.total.value)) ? undefined : parseFloat(form.total.value),
               };
               Object.keys(updatedReservation).forEach((key) => updatedReservation[key] === "" && delete updatedReservation[key]);
               try {
@@ -311,10 +312,10 @@ function ReservationTable() {
                 {res.checkInTime} / {res.checkOutTime}
               </td>
               <td style={cellStyle}>{res.info}</td>
-              <td style={cellStyle}>{res.deposit ?? "-"}</td>
-              <td style={cellStyle}>{res.advance ?? "-"}</td>
-              <td style={cellStyle}>{res.remaining ?? "-"}</td>
-              <td style={cellStyle}>{res.total ?? "-"}</td>
+              <td style={cellStyle}>{res.deposit !== undefined ? res.deposit : "-"}</td>
+              <td style={cellStyle}>{res.advance !== undefined ? res.advance : "-"}</td>
+              <td style={cellStyle}>{res.remaining !== undefined ? res.remaining : "-"}</td>
+              <td style={cellStyle}>{res.total !== undefined ? res.total : "-"}</td>
               <td style={cellStyle}>
                 <button onClick={() => setShowEditForm(res)}>Upraviť</button>
                 <button
