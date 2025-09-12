@@ -81,7 +81,7 @@ function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, su
         <input
           name="depositDate"
           type="date"
-          value={depositDate}
+          value={depositDate || ""}
           onChange={e => setDepositDate(e.target.value)}
         />
       </label>
@@ -103,7 +103,7 @@ function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, su
         <input
           name="advanceDate"
           type="date"
-          value={advanceDate}
+          value={advanceDate || ""}
           onChange={e => setAdvanceDate(e.target.value)}
         />
       </label>
@@ -125,7 +125,7 @@ function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, su
         <input
           name="remainingDate"
           type="date"
-          value={remainingDate}
+          value={remainingDate || ""}
           onChange={e => setRemainingDate(e.target.value)}
         />
       </label>
@@ -146,9 +146,9 @@ function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, su
         Zrušiť
       </button>
       {/* Hidden fields for date values for submit */}
-      <input type="hidden" name="depositDate" value={depositDate} />
-      <input type="hidden" name="advanceDate" value={advanceDate} />
-      <input type="hidden" name="remainingDate" value={remainingDate} />
+      <input type="hidden" name="depositDate" value={depositDate || ""} />
+      <input type="hidden" name="advanceDate" value={advanceDate || ""} />
+      <input type="hidden" name="remainingDate" value={remainingDate || ""} />
     </form>
   );
 }
@@ -276,11 +276,11 @@ function ReservationTable() {
                 platform: form.platform.value,
                 info: form.info.value,
                 deposit: form.deposit.value ? parseFloat(form.deposit.value) : undefined,
-                depositDate: form.depositDate.value || undefined,
+                depositDate: form.depositDate.value ? form.depositDate.value : null,
                 advance: form.advance.value ? parseFloat(form.advance.value) : undefined,
-                advanceDate: form.advanceDate.value || undefined,
+                advanceDate: form.advanceDate.value ? form.advanceDate.value : null,
                 remaining: form.remaining.value ? parseFloat(form.remaining.value) : undefined,
-                remainingDate: form.remainingDate.value || undefined,
+                remainingDate: form.remainingDate.value ? form.remainingDate.value : null,
                 total: form.total.value ? parseFloat(form.total.value) : undefined,
               };
               Object.keys(newReservation).forEach(key => {
@@ -336,11 +336,11 @@ function ReservationTable() {
                 platform: form.platform.value,
                 info: form.info.value,
                 deposit: form.deposit.value ? parseFloat(form.deposit.value) : undefined,
-                depositDate: form.depositDate.value || undefined,
+                depositDate: form.depositDate.value ? form.depositDate.value : null,
                 advance: form.advance.value ? parseFloat(form.advance.value) : undefined,
-                advanceDate: form.advanceDate.value || undefined,
+                advanceDate: form.advanceDate.value ? form.advanceDate.value : null,
                 remaining: form.remaining.value ? parseFloat(form.remaining.value) : undefined,
-                remainingDate: form.remainingDate.value || undefined,
+                remainingDate: form.remainingDate.value ? form.remainingDate.value : null,
                 total: form.total.value ? parseFloat(form.total.value) : undefined,
               };
               Object.keys(updatedReservation).forEach(key => {
@@ -410,11 +410,11 @@ function ReservationTable() {
               </td>
               <td style={cellStyle}>{res.info}</td>
               <td style={cellStyle}>{res.deposit !== undefined ? res.deposit : "-"}</td>
-              <td style={cellStyle}>{res.depositDate || "-"}</td>
+              <td style={cellStyle}>{res.depositDate ? res.depositDate : "-"}</td>
               <td style={cellStyle}>{res.advance !== undefined ? res.advance : "-"}</td>
-              <td style={cellStyle}>{res.advanceDate || "-"}</td>
+              <td style={cellStyle}>{res.advanceDate ? res.advanceDate : "-"}</td>
               <td style={cellStyle}>{res.remaining !== undefined ? res.remaining : "-"}</td>
-              <td style={cellStyle}>{res.remainingDate || "-"}</td>
+              <td style={cellStyle}>{res.remainingDate ? res.remainingDate : "-"}</td>
               <td style={cellStyle}>{res.total !== undefined ? res.total : "-"}</td>
               <td style={cellStyle}>
                 <button onClick={() => setShowEditForm(res)}>Upraviť</button>
