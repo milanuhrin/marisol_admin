@@ -213,7 +213,7 @@ function ReservationTable() {
 
   return (
     <div style={{ marginTop: "30px", marginBottom: "50px" }}>
-      <h3>Zoznam rezervácií</h3>
+      <h3>Rezervácie</h3>
       <button onClick={() => setShowForm(!showForm)} style={{ marginBottom: "20px" }}>
         {showForm ? "Skryť formulár" : "➕ Nová rezervácia"}
       </button>
@@ -255,6 +255,10 @@ function ReservationTable() {
                   body: JSON.stringify(newReservation),
                 });
                 const result = await response.json();
+                if (response.status === 409 && result?.error === "Termín je už obsadený") {
+                  alert(`❌ ${result.error}: ${result.conflictDates?.join(", ")}`);
+                  return;
+                }
                 if (result.success) {
                   fetchReservations();
                   form.reset();
@@ -308,6 +312,10 @@ function ReservationTable() {
                   body: JSON.stringify(updatedReservation),
                 });
                 const result = await response.json();
+                if (response.status === 409 && result?.error === "Termín je už obsadený") {
+                  alert(`❌ ${result.error}: ${result.conflictDates?.join(", ")}`);
+                  return;
+                }
                 if (result.success) {
                   fetchReservations();
                   setShowEditForm(null);
