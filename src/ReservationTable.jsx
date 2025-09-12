@@ -31,7 +31,7 @@ function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, su
         marginBottom: "20px",
       }}
     >
-      <label>
+      <label style={{ marginTop: "10px" }}>
         Dátum príchodu
         <input name="startDate" type="date" defaultValue={initialData.startDate || ""} required />
       </label>
