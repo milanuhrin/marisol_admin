@@ -379,19 +379,19 @@ function ReservationTable() {
         <thead>
           <tr style={{ background: "#f0f0f0" }}>
             <th style={cellStyle}>ID</th>
-            <th style={cellStyle}>Dátum od</th>
-            <th style={cellStyle}>Dátum do</th>
+            <th style={cellStyle}>Dátum príchodu</th>
+            <th style={cellStyle}>Dátum odchodu</th>
             <th style={cellStyle}>Meno hosťa</th>
             <th style={cellStyle}>Kontakt</th>
             <th style={cellStyle}>Platforma</th>
             <th style={cellStyle}>Check-in/out</th>
             <th style={cellStyle}>Poznámka</th>
             <th style={cellStyle}>Depozit (EUR)</th>
-            <th style={cellStyle}>Dátum depozitu</th>
+            <th style={cellStyle}>Dátum uhradenia depozitu</th>
             <th style={cellStyle}>Záloha (EUR)</th>
-            <th style={cellStyle}>Dátum zálohy</th>
+            <th style={cellStyle}>Dátum uhradenia zálohy</th>
             <th style={cellStyle}>Doplatok (EUR)</th>
-            <th style={cellStyle}>Dátum doplatku</th>
+            <th style={cellStyle}>Dátum uhradenia doplatku</th>
             <th style={cellStyle}>Spolu (EUR)</th>
             <th style={cellStyle}>Akcie</th>
           </tr>
