@@ -236,6 +236,11 @@ function formatDate(dateStr) {
   return `${d}.${m}.${y}`;
 }
 
+function formatCurrency(value) {
+  if (value === undefined || value === null || value === "" || isNaN(value)) return "-";
+  return new Intl.NumberFormat("sk-SK", { style: "currency", currency: "EUR" }).format(value);
+}
+
 function ReservationTable() {
   const [reservations, setReservations] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -445,13 +450,13 @@ function ReservationTable() {
             <th style={cellStyle}>Platforma</th>
             <th style={cellStyle}>Check-in/out</th>
             <th style={cellStyle}>Poznámka</th>
-            <th style={cellStyle}>Depozit (EUR)</th>
+            <th style={cellStyle}>Depozit</th>
             <th style={cellStyle}>Dátum uhradenia depozitu</th>
-            <th style={cellStyle}>Záloha (EUR)</th>
+            <th style={cellStyle}>Záloha</th>
             <th style={cellStyle}>Dátum uhradenia zálohy</th>
-            <th style={cellStyle}>Doplatok (EUR)</th>
+            <th style={cellStyle}>Doplatok</th>
             <th style={cellStyle}>Dátum uhradenia doplatku</th>
-            <th style={cellStyle}>Spolu (EUR)</th>
+            <th style={cellStyle}>Spolu</th>
             <th style={cellStyle}>Akcie</th>
           </tr>
         </thead>
@@ -471,13 +476,14 @@ function ReservationTable() {
                 {res.checkInTime} / {res.checkOutTime}
               </td>
               <td style={cellStyle}>{res.info}</td>
-              <td style={cellStyle}>{res.deposit !== undefined ? res.deposit : "-"}</td>
-              <td style={cellStyle}>{res.advance !== undefined ? res.advance : "-"}</td>
-              <td style={cellStyle}>{res.remaining !== undefined ? res.remaining : "-"}</td>
+              {/* Financial fields in order: deposit, depositDate, advance, advanceDate, remaining, remainingDate, total */}
+              <td style={cellStyle}>{formatCurrency(res.deposit)}</td>
               <td style={cellStyle}>{res.depositDate ? formatDate(res.depositDate) : "-"}</td>
+              <td style={cellStyle}>{formatCurrency(res.advance)}</td>
               <td style={cellStyle}>{res.advanceDate ? formatDate(res.advanceDate) : "-"}</td>
+              <td style={cellStyle}>{formatCurrency(res.remaining)}</td>
               <td style={cellStyle}>{res.remainingDate ? formatDate(res.remainingDate) : "-"}</td>
-              <td style={cellStyle}>{res.total !== undefined ? res.total : "-"}</td>
+              <td style={cellStyle}>{formatCurrency(res.total)}</td>
               <td style={cellStyle}>
                 <button onClick={() => setShowEditForm(res)}>Upraviť</button>
                 <button
