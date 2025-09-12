@@ -177,6 +177,14 @@ ReservationForm.propTypes = {
   submitColor: PropTypes.string.isRequired,
 }
 
+function formatDate(dateStr) {
+  // Expects "YYYY-MM-DD", returns "DD.MM.YYYY"
+  if (!dateStr || typeof dateStr !== "string") return "-";
+  const [y, m, d] = dateStr.split("-");
+  if (!y || !m || !d) return dateStr;
+  return `${d}.${m}.${y}`;
+}
+
 function ReservationTable() {
   const [reservations, setReservations] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -410,11 +418,11 @@ function ReservationTable() {
               </td>
               <td style={cellStyle}>{res.info}</td>
               <td style={cellStyle}>{res.deposit !== undefined ? res.deposit : "-"}</td>
-              <td style={cellStyle}>{res.depositDate ? res.depositDate : "-"}</td>
               <td style={cellStyle}>{res.advance !== undefined ? res.advance : "-"}</td>
-              <td style={cellStyle}>{res.advanceDate ? res.advanceDate : "-"}</td>
               <td style={cellStyle}>{res.remaining !== undefined ? res.remaining : "-"}</td>
-              <td style={cellStyle}>{res.remainingDate ? res.remainingDate : "-"}</td>
+              <td style={cellStyle}>{res.depositDate ? formatDate(res.depositDate) : "-"}</td>
+              <td style={cellStyle}>{res.advanceDate ? formatDate(res.advanceDate) : "-"}</td>
+              <td style={cellStyle}>{res.remainingDate ? formatDate(res.remainingDate) : "-"}</td>
               <td style={cellStyle}>{res.total !== undefined ? res.total : "-"}</td>
               <td style={cellStyle}>
                 <button onClick={() => setShowEditForm(res)}>Upraviť</button>
