@@ -405,11 +405,14 @@ function ReservationTable() {
           </tr>
         </thead>
         <tbody>
-          {reservations.map((res) => (
+          {reservations
+            .slice()
+            .sort((a, b) => (a.startDate || "").localeCompare(b.startDate || ""))
+            .map((res) => (
             <tr key={res.reservationId}>
               <td style={cellStyle}>{res.reservationId}</td>
-              <td style={cellStyle}>{res.startDate}</td>
-              <td style={cellStyle}>{res.endDate}</td>
+              <td style={cellStyle}>{res.startDate ? formatDate(res.startDate) : "-"}</td>
+              <td style={cellStyle}>{res.endDate ? formatDate(res.endDate) : "-"}</td>
               <td style={cellStyle}>{res.guestName}</td>
               <td style={cellStyle}>{res.guestContact}</td>
               <td style={cellStyle}>{res.platform}</td>
