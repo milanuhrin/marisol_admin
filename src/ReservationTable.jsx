@@ -145,10 +145,6 @@ function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, su
       <button type="button" onClick={onCancel} style={{ padding: "10px" }}>
         Zrušiť
       </button>
-      {/* Hidden fields for date values for submit */}
-      <input type="hidden" name="depositDate" value={depositDate || ""} />
-      <input type="hidden" name="advanceDate" value={advanceDate || ""} />
-      <input type="hidden" name="remainingDate" value={remainingDate || ""} />
     </form>
   );
 }
@@ -284,11 +280,11 @@ function ReservationTable() {
                 platform: form.platform.value,
                 info: form.info.value,
                 deposit: form.deposit.value ? parseFloat(form.deposit.value) : undefined,
-                depositDate: form.depositDate.value ? form.depositDate.value : null,
+                depositDate: depositDate || null,
                 advance: form.advance.value ? parseFloat(form.advance.value) : undefined,
-                advanceDate: form.advanceDate.value ? form.advanceDate.value : null,
+                advanceDate: advanceDate || null,
                 remaining: form.remaining.value ? parseFloat(form.remaining.value) : undefined,
-                remainingDate: form.remainingDate.value ? form.remainingDate.value : null,
+                remainingDate: remainingDate || null,
                 total: form.total.value ? parseFloat(form.total.value) : undefined,
               };
               Object.keys(newReservation).forEach(key => {
@@ -344,11 +340,11 @@ function ReservationTable() {
                 platform: form.platform.value,
                 info: form.info.value,
                 deposit: form.deposit.value ? parseFloat(form.deposit.value) : undefined,
-                depositDate: form.depositDate.value ? form.depositDate.value : null,
+                depositDate: depositDate || null,
                 advance: form.advance.value ? parseFloat(form.advance.value) : undefined,
-                advanceDate: form.advanceDate.value ? form.advanceDate.value : null,
+                advanceDate: advanceDate || null,
                 remaining: form.remaining.value ? parseFloat(form.remaining.value) : undefined,
-                remainingDate: form.remainingDate.value ? form.remainingDate.value : null,
+                remainingDate: remainingDate || null,
                 total: form.total.value ? parseFloat(form.total.value) : undefined,
               };
               Object.keys(updatedReservation).forEach(key => {
