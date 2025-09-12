@@ -6,24 +6,51 @@ import PropTypes from 'prop-types';
 const API_URL = "https://eb8ya8rtoc.execute-api.us-east-1.amazonaws.com/main/reservation";
 
 function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, submitColor }) {
+  // Controlled state for all fields except startDate/endDate
+  const [guestName, setGuestName] = useState(initialData.guestName || "");
+  const [guestContact, setGuestContact] = useState(initialData.guestContact || "");
+  const [checkInTime, setCheckInTime] = useState(initialData.checkInTime || "");
+  const [checkOutTime, setCheckOutTime] = useState(initialData.checkOutTime || "");
+  const [platform, setPlatform] = useState(initialData.platform || "");
+  const [info, setInfo] = useState(initialData.info || "");
   const [deposit, setDeposit] = useState(
     initialData.deposit != null ? parseFloat(initialData.deposit) ?? '' : ''
   );
+  const [depositDate, setDepositDate] = useState(initialData.depositDate || "");
   const [advance, setAdvance] = useState(
     initialData.advance != null ? parseFloat(initialData.advance) ?? '' : ''
   );
+  const [advanceDate, setAdvanceDate] = useState(initialData.advanceDate || "");
   const [remaining, setRemaining] = useState(
     initialData.remaining != null ? parseFloat(initialData.remaining) ?? '' : ''
   );
-  const [depositDate, setDepositDate] = useState(initialData.depositDate || "");
-  const [advanceDate, setAdvanceDate] = useState(initialData.advanceDate || "");
   const [remainingDate, setRemainingDate] = useState(initialData.remainingDate || "");
   // Total is advance + remaining, deposit is not included
   const total = (parseFloat(advance || 0) + parseFloat(remaining || 0)).toFixed(2);
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Pass controlled values as 2nd param
+    onSubmit(e, {
+      guestName,
+      guestContact,
+      checkInTime,
+      checkOutTime,
+      platform,
+      info,
+      deposit,
+      depositDate,
+      advance,
+      advanceDate,
+      remaining,
+      remainingDate,
+      total,
+    });
+  };
+
   return (
     <form
-      onSubmit={onSubmit}
+      onSubmit={handleSubmit}
       style={{
         display: "flex",
         flexDirection: "column",
@@ -41,27 +68,55 @@ function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, su
       </label>
       <label>
         Meno hosťa
-        <input name="guestName" defaultValue={initialData.guestName || ""} required />
+        <input
+          name="guestName"
+          value={guestName}
+          onChange={e => setGuestName(e.target.value)}
+          required
+        />
       </label>
       <label>
         Kontakt
-        <input name="guestContact" defaultValue={initialData.guestContact || ""} />
+        <input
+          name="guestContact"
+          value={guestContact}
+          onChange={e => setGuestContact(e.target.value)}
+        />
       </label>
       <label>
         Check-in
-        <input name="checkInTime" defaultValue={initialData.checkInTime || ""} placeholder="napr. 14:00" />
+        <input
+          name="checkInTime"
+          value={checkInTime}
+          onChange={e => setCheckInTime(e.target.value)}
+          placeholder="napr. 14:00"
+        />
       </label>
       <label>
         Check-out
-        <input name="checkOutTime" defaultValue={initialData.checkOutTime || ""} placeholder="napr. 10:00" />
+        <input
+          name="checkOutTime"
+          value={checkOutTime}
+          onChange={e => setCheckOutTime(e.target.value)}
+          placeholder="napr. 10:00"
+        />
       </label>
       <label>
         Platforma
-        <input name="platform" defaultValue={initialData.platform || ""} placeholder="napr. AirBnB" />
+        <input
+          name="platform"
+          value={platform}
+          onChange={e => setPlatform(e.target.value)}
+          placeholder="napr. AirBnB"
+        />
       </label>
       <label>
         Poznámka
-        <input name="info" defaultValue={initialData.info || ""} />
+        <input
+          name="info"
+          value={info}
+          onChange={e => setInfo(e.target.value)}
+        />
       </label>
       <label>
         Depozit (EUR)
@@ -265,27 +320,27 @@ function ReservationTable() {
             submitLabel="Uložiť rezerváciu"
             submitColor="#007bff"
             onCancel={() => setShowForm(false)}
-            onSubmit={async (e) => {
-              e.preventDefault();
+            onSubmit={async (e, values) => {
+              // values: guestName, guestContact, checkInTime, checkOutTime, platform, info, deposit, depositDate, advance, advanceDate, remaining, remainingDate, total
               const form = e.target;
               const reservationId = `RES${form.startDate.value.replaceAll("-", "")}`;
               const newReservation = {
                 reservationId,
                 startDate: form.startDate.value,
                 endDate: form.endDate.value,
-                guestName: form.guestName.value,
-                guestContact: form.guestContact.value,
-                checkInTime: form.checkInTime.value,
-                checkOutTime: form.checkOutTime.value,
-                platform: form.platform.value,
-                info: form.info.value,
-                deposit: form.deposit.value ? parseFloat(form.deposit.value) : undefined,
-                depositDate: depositDate || null,
-                advance: form.advance.value ? parseFloat(form.advance.value) : undefined,
-                advanceDate: advanceDate || null,
-                remaining: form.remaining.value ? parseFloat(form.remaining.value) : undefined,
-                remainingDate: remainingDate || null,
-                total: form.total.value ? parseFloat(form.total.value) : undefined,
+                guestName: values.guestName,
+                guestContact: values.guestContact,
+                checkInTime: values.checkInTime,
+                checkOutTime: values.checkOutTime,
+                platform: values.platform,
+                info: values.info,
+                deposit: values.deposit !== '' && values.deposit != null ? parseFloat(values.deposit) : undefined,
+                depositDate: values.depositDate || null,
+                advance: values.advance !== '' && values.advance != null ? parseFloat(values.advance) : undefined,
+                advanceDate: values.advanceDate || null,
+                remaining: values.remaining !== '' && values.remaining != null ? parseFloat(values.remaining) : undefined,
+                remainingDate: values.remainingDate || null,
+                total: values.total !== '' && values.total != null ? parseFloat(values.total) : undefined,
               };
               Object.keys(newReservation).forEach(key => {
                 if (newReservation[key] === "" || newReservation[key] === undefined) {
@@ -327,25 +382,25 @@ function ReservationTable() {
             submitLabel="Uložiť zmeny"
             submitColor="orange"
             onCancel={() => setShowEditForm(null)}
-            onSubmit={async (e) => {
-              e.preventDefault();
+            onSubmit={async (e, values) => {
+              // values: guestName, guestContact, checkInTime, checkOutTime, platform, info, deposit, depositDate, advance, advanceDate, remaining, remainingDate, total
               const form = e.target;
               const updatedReservation = {
                 startDate: form.startDate.value,
                 endDate: form.endDate.value,
-                guestName: form.guestName.value,
-                guestContact: form.guestContact.value,
-                checkInTime: form.checkInTime.value,
-                checkOutTime: form.checkOutTime.value,
-                platform: form.platform.value,
-                info: form.info.value,
-                deposit: form.deposit.value ? parseFloat(form.deposit.value) : undefined,
-                depositDate: depositDate || null,
-                advance: form.advance.value ? parseFloat(form.advance.value) : undefined,
-                advanceDate: advanceDate || null,
-                remaining: form.remaining.value ? parseFloat(form.remaining.value) : undefined,
-                remainingDate: remainingDate || null,
-                total: form.total.value ? parseFloat(form.total.value) : undefined,
+                guestName: values.guestName,
+                guestContact: values.guestContact,
+                checkInTime: values.checkInTime,
+                checkOutTime: values.checkOutTime,
+                platform: values.platform,
+                info: values.info,
+                deposit: values.deposit !== '' && values.deposit != null ? parseFloat(values.deposit) : undefined,
+                depositDate: values.depositDate || null,
+                advance: values.advance !== '' && values.advance != null ? parseFloat(values.advance) : undefined,
+                advanceDate: values.advanceDate || null,
+                remaining: values.remaining !== '' && values.remaining != null ? parseFloat(values.remaining) : undefined,
+                remainingDate: values.remainingDate || null,
+                total: values.total !== '' && values.total != null ? parseFloat(values.total) : undefined,
               };
               Object.keys(updatedReservation).forEach(key => {
                 if (updatedReservation[key] === "" || updatedReservation[key] === undefined) {
