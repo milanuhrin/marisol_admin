@@ -345,8 +345,8 @@ function ReservationTable() {
             <th style={cellStyle}>Poznámka</th>
             <th style={cellStyle}>Depozit (EUR)</th>
             <th style={cellStyle}>Záloha (EUR)</th>
-            <th style={cellStyle}>Doplatok(EUR)</th>
-            <th style={cellStyle}>Spolu(EUR)</th>
+            <th style={cellStyle}>Doplatok (EUR)</th>
+            <th style={cellStyle}>Spolu (EUR)</th>
             <th style={cellStyle}>Akcie</th>
           </tr>
         </thead>
