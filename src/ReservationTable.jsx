@@ -276,11 +276,11 @@ function ReservationTable() {
                 platform: form.platform.value,
                 info: form.info.value,
                 deposit: form.deposit.value ? parseFloat(form.deposit.value) : undefined,
-                depositDate: form.depositDate.value ? form.depositDate.value : undefined,
+                depositDate: form.depositDate.value || undefined,
                 advance: form.advance.value ? parseFloat(form.advance.value) : undefined,
-                advanceDate: form.advanceDate.value ? form.advanceDate.value : undefined,
+                advanceDate: form.advanceDate.value || undefined,
                 remaining: form.remaining.value ? parseFloat(form.remaining.value) : undefined,
-                remainingDate: form.remainingDate.value ? form.remainingDate.value : undefined,
+                remainingDate: form.remainingDate.value || undefined,
                 total: form.total.value ? parseFloat(form.total.value) : undefined,
               };
               Object.keys(newReservation).forEach(key => {
@@ -336,11 +336,11 @@ function ReservationTable() {
                 platform: form.platform.value,
                 info: form.info.value,
                 deposit: form.deposit.value ? parseFloat(form.deposit.value) : undefined,
-                depositDate: form.depositDate.value ? form.depositDate.value : undefined,
+                depositDate: form.depositDate.value || undefined,
                 advance: form.advance.value ? parseFloat(form.advance.value) : undefined,
-                advanceDate: form.advanceDate.value ? form.advanceDate.value : undefined,
+                advanceDate: form.advanceDate.value || undefined,
                 remaining: form.remaining.value ? parseFloat(form.remaining.value) : undefined,
-                remainingDate: form.remainingDate.value ? form.remainingDate.value : undefined,
+                remainingDate: form.remainingDate.value || undefined,
                 total: form.total.value ? parseFloat(form.total.value) : undefined,
               };
               Object.keys(updatedReservation).forEach(key => {
