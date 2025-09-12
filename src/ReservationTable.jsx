@@ -452,6 +452,8 @@ function Modal({ children, onClose }) {
           flex-direction: column;
           font-weight: bold;
           font-size: 14px;
+          text-align: left;
+          align-items: flex-start;
         }
 
         form input {
