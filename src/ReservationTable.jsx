@@ -338,15 +338,15 @@ function ReservationTable() {
             <th style={cellStyle}>ID</th>
             <th style={cellStyle}>Dátum od</th>
             <th style={cellStyle}>Dátum do</th>
-            <th style={cellStyle}>Hosť</th>
+            <th style={cellStyle}>Meno hosťa</th>
             <th style={cellStyle}>Kontakt</th>
             <th style={cellStyle}>Platforma</th>
             <th style={cellStyle}>Check-in/out</th>
             <th style={cellStyle}>Poznámka</th>
-            <th style={cellStyle}>Depozit</th>
-            <th style={cellStyle}>Záloha</th>
-            <th style={cellStyle}>Doplatok</th>
-            <th style={cellStyle}>Spolu</th>
+            <th style={cellStyle}>Depozit (EUR)</th>
+            <th style={cellStyle}>Záloha (EUR)</th>
+            <th style={cellStyle}>Doplatok(EUR)</th>
+            <th style={cellStyle}>Spolu(EUR)</th>
             <th style={cellStyle}>Akcie</th>
           </tr>
         </thead>
