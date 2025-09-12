@@ -15,6 +15,9 @@ function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, su
   const [remaining, setRemaining] = useState(
     initialData.remaining != null ? parseFloat(initialData.remaining) ?? '' : ''
   );
+  const [depositDate, setDepositDate] = useState(initialData.depositDate || "");
+  const [advanceDate, setAdvanceDate] = useState(initialData.advanceDate || "");
+  const [remainingDate, setRemainingDate] = useState(initialData.remainingDate || "");
   // Total is advance + remaining, deposit is not included
   const total = (parseFloat(advance || 0) + parseFloat(remaining || 0)).toFixed(2);
 
@@ -74,6 +77,15 @@ function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, su
         />
       </label>
       <label>
+        Dátum depozitu
+        <input
+          name="depositDate"
+          type="date"
+          value={depositDate}
+          onChange={e => setDepositDate(e.target.value)}
+        />
+      </label>
+      <label>
         Záloha
         <input
           name="advance"
@@ -87,6 +99,15 @@ function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, su
         />
       </label>
       <label>
+        Dátum zálohy
+        <input
+          name="advanceDate"
+          type="date"
+          value={advanceDate}
+          onChange={e => setAdvanceDate(e.target.value)}
+        />
+      </label>
+      <label>
         Doplatok
         <input
           name="remaining"
@@ -97,6 +118,15 @@ function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, su
             const val = e.target.value;
             setRemaining(val === '' ? '' : parseFloat(val));
           }}
+        />
+      </label>
+      <label>
+        Dátum doplatku
+        <input
+          name="remainingDate"
+          type="date"
+          value={remainingDate}
+          onChange={e => setRemainingDate(e.target.value)}
         />
       </label>
       <label>
@@ -115,6 +145,10 @@ function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, su
       <button type="button" onClick={onCancel} style={{ padding: "10px" }}>
         Zrušiť
       </button>
+      {/* Hidden fields for date values for submit */}
+      <input type="hidden" name="depositDate" value={depositDate} />
+      <input type="hidden" name="advanceDate" value={advanceDate} />
+      <input type="hidden" name="remainingDate" value={remainingDate} />
     </form>
   );
 }
@@ -130,8 +164,11 @@ ReservationForm.propTypes = {
     platform: PropTypes.string,
     info: PropTypes.string,
     deposit: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    depositDate: PropTypes.string,
     advance: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    advanceDate: PropTypes.string,
     remaining: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    remainingDate: PropTypes.string,
     total: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   }),
   onSubmit: PropTypes.func.isRequired,
@@ -239,8 +276,11 @@ function ReservationTable() {
                 platform: form.platform.value,
                 info: form.info.value,
                 deposit: form.deposit.value ? parseFloat(form.deposit.value) : undefined,
+                depositDate: form.depositDate.value ? form.depositDate.value : undefined,
                 advance: form.advance.value ? parseFloat(form.advance.value) : undefined,
+                advanceDate: form.advanceDate.value ? form.advanceDate.value : undefined,
                 remaining: form.remaining.value ? parseFloat(form.remaining.value) : undefined,
+                remainingDate: form.remainingDate.value ? form.remainingDate.value : undefined,
                 total: form.total.value ? parseFloat(form.total.value) : undefined,
               };
               Object.keys(newReservation).forEach(key => {
@@ -296,8 +336,11 @@ function ReservationTable() {
                 platform: form.platform.value,
                 info: form.info.value,
                 deposit: form.deposit.value ? parseFloat(form.deposit.value) : undefined,
+                depositDate: form.depositDate.value ? form.depositDate.value : undefined,
                 advance: form.advance.value ? parseFloat(form.advance.value) : undefined,
+                advanceDate: form.advanceDate.value ? form.advanceDate.value : undefined,
                 remaining: form.remaining.value ? parseFloat(form.remaining.value) : undefined,
+                remainingDate: form.remainingDate.value ? form.remainingDate.value : undefined,
                 total: form.total.value ? parseFloat(form.total.value) : undefined,
               };
               Object.keys(updatedReservation).forEach(key => {
@@ -344,8 +387,11 @@ function ReservationTable() {
             <th style={cellStyle}>Check-in/out</th>
             <th style={cellStyle}>Poznámka</th>
             <th style={cellStyle}>Depozit (EUR)</th>
+            <th style={cellStyle}>Dátum depozitu</th>
             <th style={cellStyle}>Záloha (EUR)</th>
+            <th style={cellStyle}>Dátum zálohy</th>
             <th style={cellStyle}>Doplatok (EUR)</th>
+            <th style={cellStyle}>Dátum doplatku</th>
             <th style={cellStyle}>Spolu (EUR)</th>
             <th style={cellStyle}>Akcie</th>
           </tr>
@@ -364,8 +410,11 @@ function ReservationTable() {
               </td>
               <td style={cellStyle}>{res.info}</td>
               <td style={cellStyle}>{res.deposit !== undefined ? res.deposit : "-"}</td>
+              <td style={cellStyle}>{res.depositDate || "-"}</td>
               <td style={cellStyle}>{res.advance !== undefined ? res.advance : "-"}</td>
+              <td style={cellStyle}>{res.advanceDate || "-"}</td>
               <td style={cellStyle}>{res.remaining !== undefined ? res.remaining : "-"}</td>
+              <td style={cellStyle}>{res.remainingDate || "-"}</td>
               <td style={cellStyle}>{res.total !== undefined ? res.total : "-"}</td>
               <td style={cellStyle}>
                 <button onClick={() => setShowEditForm(res)}>Upraviť</button>
