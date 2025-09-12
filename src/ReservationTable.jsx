@@ -32,15 +32,15 @@ function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, su
       }}
     >
       <label>
-        Dátum od
+        Dátum príchodu
         <input name="startDate" type="date" defaultValue={initialData.startDate || ""} required />
       </label>
       <label>
-        Dátum do
+        Dátum odchodu
         <input name="endDate" type="date" defaultValue={initialData.endDate || ""} required />
       </label>
       <label>
-        Meno
+        Meno hosťa
         <input name="guestName" defaultValue={initialData.guestName || ""} required />
       </label>
       <label>
@@ -64,7 +64,7 @@ function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, su
         <input name="info" defaultValue={initialData.info || ""} />
       </label>
       <label>
-        Depozit
+        Depozit (EUR)
         <input
           name="deposit"
           type="number"
@@ -77,7 +77,7 @@ function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, su
         />
       </label>
       <label>
-        Dátum depozitu
+        Dátum uhradenia depozitu
         <input
           name="depositDate"
           type="date"
@@ -86,7 +86,7 @@ function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, su
         />
       </label>
       <label>
-        Záloha
+        Záloha (EUR)
         <input
           name="advance"
           type="number"
@@ -99,7 +99,7 @@ function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, su
         />
       </label>
       <label>
-        Dátum zálohy
+        Dátum uhradenia zálohy
         <input
           name="advanceDate"
           type="date"
@@ -108,7 +108,7 @@ function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, su
         />
       </label>
       <label>
-        Doplatok
+        Doplatok (EUR)
         <input
           name="remaining"
           type="number"
@@ -121,7 +121,7 @@ function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, su
         />
       </label>
       <label>
-        Dátum doplatku
+        Dátum uhradenia doplatku
         <input
           name="remainingDate"
           type="date"
@@ -130,7 +130,7 @@ function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, su
         />
       </label>
       <label>
-        Spolu bez depozitu
+        Spolu (EUR) bez depozitu
         <input
           name="total"
           type="number"
