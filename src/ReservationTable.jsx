@@ -9,7 +9,8 @@ function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, su
   const [deposit, setDeposit] = useState(parseFloat(initialData.deposit) || 0);
   const [advance, setAdvance] = useState(parseFloat(initialData.advance) || 0);
   const [remaining, setRemaining] = useState(parseFloat(initialData.remaining) || 0);
-  const total = (deposit + advance + remaining).toFixed(2);
+  // Total is advance + remaining, deposit is not included
+  const total = (advance + remaining).toFixed(2);
 
   return (
     <form
@@ -204,17 +205,13 @@ function ReservationTable() {
                 checkOutTime: form.checkOutTime.value,
                 platform: form.platform.value,
                 info: form.info.value,
-                deposit: isNaN(parseFloat(form.deposit.value)) ? undefined : parseFloat(form.deposit.value),
-                advance: isNaN(parseFloat(form.advance.value)) ? undefined : parseFloat(form.advance.value),
-                remaining: isNaN(parseFloat(form.remaining.value)) ? undefined : parseFloat(form.remaining.value),
-                total: isNaN(parseFloat(form.total.value)) ? undefined : parseFloat(form.total.value),
+                deposit: form.deposit.value ? parseFloat(form.deposit.value) : undefined,
+                advance: form.advance.value ? parseFloat(form.advance.value) : undefined,
+                remaining: form.remaining.value ? parseFloat(form.remaining.value) : undefined,
+                total: form.total.value ? parseFloat(form.total.value) : undefined,
               };
               Object.keys(newReservation).forEach(key => {
-                if (
-                  newReservation[key] === "" ||
-                  newReservation[key] === undefined ||
-                  (typeof newReservation[key] === "number" && isNaN(newReservation[key]))
-                ) {
+                if (newReservation[key] === "" || newReservation[key] === undefined) {
                   delete newReservation[key];
                 }
               });
@@ -261,17 +258,13 @@ function ReservationTable() {
                 checkOutTime: form.checkOutTime.value,
                 platform: form.platform.value,
                 info: form.info.value,
-                deposit: isNaN(parseFloat(form.deposit.value)) ? undefined : parseFloat(form.deposit.value),
-                advance: isNaN(parseFloat(form.advance.value)) ? undefined : parseFloat(form.advance.value),
-                remaining: isNaN(parseFloat(form.remaining.value)) ? undefined : parseFloat(form.remaining.value),
-                total: isNaN(parseFloat(form.total.value)) ? undefined : parseFloat(form.total.value),
+                deposit: form.deposit.value ? parseFloat(form.deposit.value) : undefined,
+                advance: form.advance.value ? parseFloat(form.advance.value) : undefined,
+                remaining: form.remaining.value ? parseFloat(form.remaining.value) : undefined,
+                total: form.total.value ? parseFloat(form.total.value) : undefined,
               };
               Object.keys(updatedReservation).forEach(key => {
-                if (
-                  updatedReservation[key] === "" ||
-                  updatedReservation[key] === undefined ||
-                  (typeof updatedReservation[key] === "number" && isNaN(updatedReservation[key]))
-                ) {
+                if (updatedReservation[key] === "" || updatedReservation[key] === undefined) {
                   delete updatedReservation[key];
                 }
               });
