@@ -6,11 +6,17 @@ import PropTypes from 'prop-types';
 const API_URL = "https://eb8ya8rtoc.execute-api.us-east-1.amazonaws.com/main/reservation";
 
 function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, submitColor }) {
-  const [deposit, setDeposit] = useState(parseFloat(initialData.deposit) || 0);
-  const [advance, setAdvance] = useState(parseFloat(initialData.advance) || 0);
-  const [remaining, setRemaining] = useState(parseFloat(initialData.remaining) || 0);
+  const [deposit, setDeposit] = useState(
+    initialData.deposit != null ? parseFloat(initialData.deposit) ?? '' : ''
+  );
+  const [advance, setAdvance] = useState(
+    initialData.advance != null ? parseFloat(initialData.advance) ?? '' : ''
+  );
+  const [remaining, setRemaining] = useState(
+    initialData.remaining != null ? parseFloat(initialData.remaining) ?? '' : ''
+  );
   // Total is advance + remaining, deposit is not included
-  const total = (advance + remaining).toFixed(2);
+  const total = (parseFloat(advance || 0) + parseFloat(remaining || 0)).toFixed(2);
 
   return (
     <form
@@ -56,15 +62,42 @@ function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, su
       </label>
       <label>
         Depozit
-        <input name="deposit" type="number" step="0.01" value={isNaN(deposit) || deposit === 0 ? "" : deposit} onChange={e => setDeposit(parseFloat(e.target.value) || 0)} />
+        <input
+          name="deposit"
+          type="number"
+          step="0.01"
+          value={deposit === '' || isNaN(deposit) ? '' : deposit}
+          onChange={e => {
+            const val = e.target.value;
+            setDeposit(val === '' ? '' : parseFloat(val));
+          }}
+        />
       </label>
       <label>
         Záloha
-        <input name="advance" type="number" step="0.01" value={isNaN(advance) || advance === 0 ? "" : advance} onChange={e => setAdvance(parseFloat(e.target.value) || 0)} />
+        <input
+          name="advance"
+          type="number"
+          step="0.01"
+          value={advance === '' || isNaN(advance) ? '' : advance}
+          onChange={e => {
+            const val = e.target.value;
+            setAdvance(val === '' ? '' : parseFloat(val));
+          }}
+        />
       </label>
       <label>
         Doplatok
-        <input name="remaining" type="number" step="0.01" value={isNaN(remaining) || remaining === 0 ? "" : remaining} onChange={e => setRemaining(parseFloat(e.target.value) || 0)} />
+        <input
+          name="remaining"
+          type="number"
+          step="0.01"
+          value={remaining === '' || isNaN(remaining) ? '' : remaining}
+          onChange={e => {
+            const val = e.target.value;
+            setRemaining(val === '' ? '' : parseFloat(val));
+          }}
+        />
       </label>
       <label>
         Spolu bez depozitu
