@@ -90,6 +90,7 @@ function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, su
           value={checkInTime}
           onChange={e => setCheckInTime(e.target.value)}
           placeholder="napr. 14:00"
+          defaultValue="14:00"
         />
       </label>
       <label>
@@ -99,16 +100,24 @@ function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, su
           value={checkOutTime}
           onChange={e => setCheckOutTime(e.target.value)}
           placeholder="napr. 10:00"
+          defaultValue="10:00"
         />
       </label>
       <label>
         Platforma
-        <input
+        <select
           name="platform"
           value={platform}
           onChange={e => setPlatform(e.target.value)}
-          placeholder="napr. AirBnB"
-        />
+        >
+          <option value="">Vyberte platformu</option>
+          <option value="Facebook">Facebook</option>
+          <option value="Airbnb">Airbnb</option>
+          <option value="Booking">Booking</option>
+          <option value="Znami">Znami</option>
+          <option value="Rodina">Rodina</option>
+          <option value="WaeFoo">WaeFoo</option>
+        </select>
       </label>
       <label>
         Poznámka
@@ -456,28 +465,20 @@ function ReservationTable() {
             <th style={cellStyle}>Platforma</th>
             <th style={cellStyle}>Check-in/out</th>
             <th style={cellStyle}>Poznámka</th>
-            <th style={cellStyle}>
-              Depozit ({formatCurrency(totalDeposit)})
-            </th>
-            <th style={cellStyle}>Dátum uhradenia depozitu</th>
-            <th style={cellStyle}>
-              Záloha ({formatCurrency(totalAdvance)})
-            </th>
-            <th style={cellStyle}>Dátum uhradenia zálohy</th>
-            <th style={cellStyle}>
-              Doplatok ({formatCurrency(totalRemaining)})
-            </th>
-            <th style={cellStyle}>Dátum uhradenia doplatku</th>
-            <th style={cellStyle}>
-              Spolu ({formatCurrency(totalSum)})
-            </th>
+            <th style={cellStyle}>Depozit ({formatCurrency(totalDeposit)})</th>
+            <th style={cellStyle}>Uhradenie depozitu</th>
+            <th style={cellStyle}>Záloha ({formatCurrency(totalAdvance)})</th>
+            <th style={cellStyle}>Uhradenie zálohy</th>
+            <th style={cellStyle}>Doplatok ({formatCurrency(totalRemaining)})</th>
+            <th style={cellStyle}>Uhradenie doplatku</th>
+            <th style={cellStyle}>Spolu ({formatCurrency(totalSum)})</th>
             <th style={cellStyle}>Akcie</th>
           </tr>
         </thead>
         <tbody>
           {reservations
             .slice()
-            .sort((a, b) => (a.startDate || "").localeCompare(b.startDate || ""))
+            .sort((a, b) => (b.startDate || "").localeCompare(a.startDate || ""))
             .map((res) => (
             <tr key={res.reservationId}>
               <td style={cellStyle}>{res.reservationId}</td>
