@@ -30,6 +30,8 @@ function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, su
   const [children, setChildren] = useState(initialData.children || "0");
   // State for NUKI code
   const [nukiCode, setNukiCode] = useState(initialData.nukiCode || "");
+  // State for account
+  const [account, setAccount] = useState(initialData.account || "");
   // Total is advance + remaining, deposit is not included
   const total = (parseFloat(advance || 0) + parseFloat(remaining || 0)).toFixed(2);
 
@@ -42,6 +44,7 @@ function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, su
       checkInTime,
       checkOutTime,
       platform,
+      account,
       info,
       deposit,
       depositDate,
@@ -128,6 +131,19 @@ function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, su
         </select>
       </label>
       {/* Adults and children fields */}
+      <label>
+        Účet
+        <select
+          name="account"
+          value={account}
+          onChange={e => setAccount(e.target.value)}
+        >
+          <option value="">Vyberte účet</option>
+          <option value="Santander">Santander</option>
+          <option value="Revolut">Revolut</option>
+          <option value="Cash">Cash</option>
+        </select>
+      </label>
       <label>
         Počet dospelých
         <select name="adults" value={adults} onChange={e => setAdults(e.target.value)}>
@@ -382,6 +398,7 @@ function ReservationTable() {
               checkInTime: values.checkInTime,
               checkOutTime: values.checkOutTime,
               platform: values.platform,
+              account: values.account || null,
               info: values.info,
               deposit: values.deposit !== '' && values.deposit != null ? parseFloat(values.deposit) : undefined,
               depositDate: values.depositDate || null,
@@ -445,6 +462,7 @@ function ReservationTable() {
               checkInTime: values.checkInTime,
               checkOutTime: values.checkOutTime,
               platform: values.platform,
+              account: values.account || null,
               info: values.info,
               deposit: values.deposit !== '' && values.deposit != null ? parseFloat(values.deposit) : undefined,
               depositDate: values.depositDate || null,
@@ -498,6 +516,7 @@ function ReservationTable() {
             <th style={cellStyle}>Meno hosťa</th>
             <th style={cellStyle}>Kontakt</th>
             <th style={cellStyle}>Platforma</th>
+            <th style={cellStyle}>Účet</th>
             <th style={cellStyle}>Check-in/out</th>
             <th style={cellStyle}>Dospelí</th>
             <th style={cellStyle}>Deti</th>
@@ -525,6 +544,7 @@ function ReservationTable() {
               <td style={cellStyle}>{res.guestName}</td>
               <td style={cellStyle}>{res.guestContact}</td>
               <td style={cellStyle}>{res.platform}</td>
+              <td style={cellStyle}>{res.account || "-"}</td>
               <td style={cellStyle}>
                 {res.checkInTime} / {res.checkOutTime}
               </td>
