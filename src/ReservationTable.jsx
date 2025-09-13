@@ -25,6 +25,9 @@ function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, su
     initialData.remaining != null ? parseFloat(initialData.remaining) ?? '' : ''
   );
   const [remainingDate, setRemainingDate] = useState(initialData.remainingDate || "");
+  // New state hooks for adults and children
+  const [adults, setAdults] = useState(initialData.adults || "1");
+  const [children, setChildren] = useState(initialData.children || "0");
   // Total is advance + remaining, deposit is not included
   const total = (parseFloat(advance || 0) + parseFloat(remaining || 0)).toFixed(2);
 
@@ -45,6 +48,8 @@ function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, su
       remaining,
       remainingDate,
       total,
+      adults,
+      children,
     });
   };
 
@@ -117,6 +122,19 @@ function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, su
           <option value="Znami">Znami</option>
           <option value="Rodina">Rodina</option>
           <option value="WaeFoo">WaeFoo</option>
+        </select>
+      </label>
+      {/* Adults and children fields */}
+      <label>
+        Počet dospelých
+        <select name="adults" value={adults} onChange={e => setAdults(e.target.value)}>
+          {[1,2,3,4,5,6].map(n => <option key={n} value={n}>{n}</option>)}
+        </select>
+      </label>
+      <label>
+        Počet detí
+        <select name="children" value={children} onChange={e => setChildren(e.target.value)}>
+          {[0,1,2,3,4].map(n => <option key={n} value={n}>{n}</option>)}
         </select>
       </label>
       <label>
@@ -341,7 +359,7 @@ function ReservationTable() {
             submitColor="#007bff"
             onCancel={() => setShowForm(false)}
             onSubmit={async (e, values) => {
-              // values: guestName, guestContact, checkInTime, checkOutTime, platform, info, deposit, depositDate, advance, advanceDate, remaining, remainingDate, total
+              // values: guestName, guestContact, checkInTime, checkOutTime, platform, info, deposit, depositDate, advance, advanceDate, remaining, remainingDate, total, adults, children
               const form = e.target;
               const reservationId = `RES${form.startDate.value.replaceAll("-", "")}`;
               const newReservation = {
@@ -361,6 +379,8 @@ function ReservationTable() {
                 remaining: values.remaining !== '' && values.remaining != null ? parseFloat(values.remaining) : undefined,
                 remainingDate: values.remainingDate || null,
                 total: values.total !== '' && values.total != null ? parseFloat(values.total) : undefined,
+                adults: values.adults !== undefined ? parseInt(values.adults, 10) : 1,
+                children: values.children !== undefined ? parseInt(values.children, 10) : 0,
               };
               Object.keys(newReservation).forEach(key => {
                 if (newReservation[key] === "" || newReservation[key] === undefined) {
@@ -403,7 +423,7 @@ function ReservationTable() {
             submitColor="orange"
             onCancel={() => setShowEditForm(null)}
             onSubmit={async (e, values) => {
-              // values: guestName, guestContact, checkInTime, checkOutTime, platform, info, deposit, depositDate, advance, advanceDate, remaining, remainingDate, total
+              // values: guestName, guestContact, checkInTime, checkOutTime, platform, info, deposit, depositDate, advance, advanceDate, remaining, remainingDate, total, adults, children
               const form = e.target;
               const updatedReservation = {
                 startDate: form.startDate.value,
@@ -421,6 +441,8 @@ function ReservationTable() {
                 remaining: values.remaining !== '' && values.remaining != null ? parseFloat(values.remaining) : undefined,
                 remainingDate: values.remainingDate || null,
                 total: values.total !== '' && values.total != null ? parseFloat(values.total) : undefined,
+                adults: values.adults !== undefined ? parseInt(values.adults, 10) : 1,
+                children: values.children !== undefined ? parseInt(values.children, 10) : 0,
               };
               Object.keys(updatedReservation).forEach(key => {
                 if (updatedReservation[key] === "" || updatedReservation[key] === undefined) {
@@ -464,6 +486,8 @@ function ReservationTable() {
             <th style={cellStyle}>Kontakt</th>
             <th style={cellStyle}>Platforma</th>
             <th style={cellStyle}>Check-in/out</th>
+            <th style={cellStyle}>Dospelí</th>
+            <th style={cellStyle}>Deti</th>
             <th style={cellStyle}>Poznámka</th>
             <th style={cellStyle}>Depozit ({formatCurrency(totalDeposit)})</th>
             <th style={cellStyle}>Uhradenie depozitu</th>
@@ -478,7 +502,7 @@ function ReservationTable() {
         <tbody>
           {reservations
             .slice()
-            .sort((a, b) => (b.startDate || "").localeCompare(a.startDate || ""))
+            .sort((a, b) => (a.startDate || "").localeCompare(b.startDate || ""))
             .map((res) => (
             <tr key={res.reservationId}>
               <td style={cellStyle}>{res.reservationId}</td>
@@ -490,6 +514,8 @@ function ReservationTable() {
               <td style={cellStyle}>
                 {res.checkInTime} / {res.checkOutTime}
               </td>
+              <td style={cellStyle}>{res.adults ?? 2}</td>
+              <td style={cellStyle}>{res.children ?? 0}</td>
               <td style={cellStyle}>{res.info}</td>
               {/* Financial fields in order: deposit, depositDate, advance, advanceDate, remaining, remainingDate, total */}
               <td style={cellStyle}>{formatCurrency(res.deposit)}</td>
