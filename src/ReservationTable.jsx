@@ -312,6 +312,12 @@ function ReservationTable() {
 
   if (loading) return <p>Načítavam rezervácie</p>;
 
+  // Compute totals for deposit, advance, remaining, and total
+  const totalDeposit = reservations.reduce((sum, r) => sum + (r.deposit || 0), 0);
+  const totalAdvance = reservations.reduce((sum, r) => sum + (r.advance || 0), 0);
+  const totalRemaining = reservations.reduce((sum, r) => sum + (r.remaining || 0), 0);
+  const totalSum = reservations.reduce((sum, r) => sum + (r.total || 0), 0);
+
   return (
     <div style={{ marginTop: "30px", marginBottom: "50px" }}>
       <h3>Rezervácie</h3>
@@ -450,13 +456,21 @@ function ReservationTable() {
             <th style={cellStyle}>Platforma</th>
             <th style={cellStyle}>Check-in/out</th>
             <th style={cellStyle}>Poznámka</th>
-            <th style={cellStyle}>Depozit</th>
+            <th style={cellStyle}>
+              Depozit ({formatCurrency(totalDeposit)})
+            </th>
             <th style={cellStyle}>Dátum uhradenia depozitu</th>
-            <th style={cellStyle}>Záloha</th>
+            <th style={cellStyle}>
+              Záloha ({formatCurrency(totalAdvance)})
+            </th>
             <th style={cellStyle}>Dátum uhradenia zálohy</th>
-            <th style={cellStyle}>Doplatok</th>
+            <th style={cellStyle}>
+              Doplatok ({formatCurrency(totalRemaining)})
+            </th>
             <th style={cellStyle}>Dátum uhradenia doplatku</th>
-            <th style={cellStyle}>Spolu</th>
+            <th style={cellStyle}>
+              Spolu ({formatCurrency(totalSum)})
+            </th>
             <th style={cellStyle}>Akcie</th>
           </tr>
         </thead>
