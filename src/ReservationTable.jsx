@@ -130,20 +130,6 @@ function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, su
           <option value="WaeFoo">WaeFoo</option>
         </select>
       </label>
-      {/* Adults and children fields */}
-      <label>
-        Účet
-        <select
-          name="account"
-          value={account}
-          onChange={e => setAccount(e.target.value)}
-        >
-          <option value="">Vyberte účet</option>
-          <option value="Santander">Santander</option>
-          <option value="Revolut">Revolut</option>
-          <option value="Cash">Cash</option>
-        </select>
-      </label>
       <label>
         Počet dospelých
         <select name="adults" value={adults} onChange={e => setAdults(e.target.value)}>
@@ -173,7 +159,7 @@ function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, su
         />
       </label>
       <label>
-        Depozit (EUR)
+        Depozit
         <input
           name="deposit"
           type="number"
@@ -186,7 +172,7 @@ function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, su
         />
       </label>
       <label>
-        Dátum uhradenia depozitu
+        Uhradenie depozitu
         <input
           name="depositDate"
           type="date"
@@ -195,7 +181,7 @@ function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, su
         />
       </label>
       <label>
-        Záloha (EUR)
+        Záloha
         <input
           name="advance"
           type="number"
@@ -208,7 +194,7 @@ function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, su
         />
       </label>
       <label>
-        Dátum uhradenia zálohy
+        Uhradenie zálohy
         <input
           name="advanceDate"
           type="date"
@@ -217,7 +203,7 @@ function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, su
         />
       </label>
       <label>
-        Doplatok (EUR)
+        Doplatok
         <input
           name="remaining"
           type="number"
@@ -239,7 +225,7 @@ function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, su
         />
       </label>
       <label>
-        Spolu (EUR) bez depozitu
+        Spolu bez depozitu
         <input
           name="total"
           type="number"
@@ -247,6 +233,19 @@ function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, su
           readOnly
           value={total}
         />
+      </label>
+      <label>
+        Účet
+        <select
+          name="account"
+          value={account}
+          onChange={e => setAccount(e.target.value)}
+        >
+          <option value="">Vyberte účet</option>
+          <option value="Santander">Santander</option>
+          <option value="Revolut">Revolut</option>
+          <option value="Cash">Cash</option>
+        </select>
       </label>
       <button type="submit" style={{ padding: "10px", backgroundColor: submitColor, color: "white", border: "none" }}>
         {submitLabel}
@@ -516,7 +515,6 @@ function ReservationTable() {
             <th style={cellStyle}>Meno hosťa</th>
             <th style={cellStyle}>Kontakt</th>
             <th style={cellStyle}>Platforma</th>
-            <th style={cellStyle}>Účet</th>
             <th style={cellStyle}>Check-in/out</th>
             <th style={cellStyle}>Dospelí</th>
             <th style={cellStyle}>Deti</th>
@@ -529,6 +527,7 @@ function ReservationTable() {
             <th style={cellStyle}>Doplatok ({formatCurrency(totalRemaining)})</th>
             <th style={cellStyle}>Uhradenie doplatku</th>
             <th style={cellStyle}>Spolu ({formatCurrency(totalSum)})</th>
+            <th style={cellStyle}>Účet</th>
             <th style={cellStyle}>Akcie</th>
           </tr>
         </thead>
@@ -544,7 +543,6 @@ function ReservationTable() {
               <td style={cellStyle}>{res.guestName}</td>
               <td style={cellStyle}>{res.guestContact}</td>
               <td style={cellStyle}>{res.platform}</td>
-              <td style={cellStyle}>{res.account || "-"}</td>
               <td style={cellStyle}>
                 {res.checkInTime} / {res.checkOutTime}
               </td>
@@ -560,6 +558,7 @@ function ReservationTable() {
               <td style={cellStyle}>{formatCurrency(res.remaining)}</td>
               <td style={cellStyle}>{res.remainingDate ? formatDate(res.remainingDate) : "-"}</td>
               <td style={cellStyle}>{formatCurrency(res.total)}</td>
+              <td style={cellStyle}>{res.account || "-"}</td>
               <td style={cellStyle}>
                 <button onClick={() => setShowEditForm(res)}>Upraviť</button>
                 <button
