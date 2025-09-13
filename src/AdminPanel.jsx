@@ -19,23 +19,6 @@ function AdminPanel({ signOut }) {
 
       <h2>Administracia</h2>
 
-      <h3>Zoznam rezervacii</h3>
-
-      <button
-        style={{
-          marginTop: "10px",
-          padding: "10px",
-          backgroundColor: "#007bff",
-          color: "white",
-          border: "none",
-          borderRadius: "5px",
-          cursor: "pointer",
-          fontSize: "16px",
-        }}
-      >
-        Nova rezervacia
-      </button>
-
       <ReservationTable />
     </div>
   );
