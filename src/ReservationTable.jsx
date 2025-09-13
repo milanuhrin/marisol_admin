@@ -118,10 +118,12 @@ function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, su
           <option value="">Vyberte platformu</option>
           <option value="Facebook">Facebook</option>
           <option value="Airbnb">Airbnb</option>
-          <option value="Booking">Booking</option>
           <option value="Znami">Znami</option>
           <option value="Rodina">Rodina</option>
+          <option value="Olaf">Rodina</option>
           <option value="WaeFoo">WaeFoo</option>
+          <option value="Booking">Booking</option>
+
         </select>
       </label>
       {/* Adults and children fields */}
