@@ -516,7 +516,7 @@ function ReservationTable() {
         <tbody>
           {reservations
             .slice()
-            .sort((a, b) => (a.startDate || "").localeCompare(b.startDate || ""))
+            .sort((a, b) => (b.startDate || "").localeCompare(a.startDate || ""))
             .map((res) => (
             <tr key={res.reservationId}>
               <td style={cellStyle}>{res.reservationId}</td>
