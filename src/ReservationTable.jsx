@@ -69,184 +69,220 @@ function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, su
         marginBottom: "20px",
       }}
     >
-      <label style={{ marginTop: "10px" }}>
-        Dátum príchodu
-        <input name="startDate" type="date" defaultValue={initialData.startDate || ""} required />
-      </label>
-      <label>
-        Dátum odchodu
-        <input name="endDate" type="date" defaultValue={initialData.endDate || ""} required />
-      </label>
-      <label>
-        Meno hosťa
-        <input
-          name="guestName"
-          value={guestName}
-          onChange={e => setGuestName(e.target.value)}
-          required
-        />
-      </label>
-      <label>
-        Kontakt
-        <input
-          name="guestContact"
-          value={guestContact}
-          onChange={e => setGuestContact(e.target.value)}
-        />
-      </label>
-      <label>
-        Check-in
-        <input
-          name="checkInTime"
-          value={checkInTime}
-          onChange={e => setCheckInTime(e.target.value)}
-          placeholder="napr. 14:00"
-          defaultValue="14:00"
-        />
-      </label>
-      <label>
-        Check-out
-        <input
-          name="checkOutTime"
-          value={checkOutTime}
-          onChange={e => setCheckOutTime(e.target.value)}
-          placeholder="napr. 10:00"
-          defaultValue="10:00"
-        />
-      </label>
-      <label>
-        Platforma
-        <select
-          name="platform"
-          value={platform}
-          onChange={e => setPlatform(e.target.value)}
-        >
-          <option value="">Vyberte platformu</option>
-          <option value="Facebook">Facebook</option>
-          <option value="Airbnb">Airbnb</option>
-          <option value="Booking">Booking</option>
-          <option value="Znami">Znami</option>
-          <option value="Rodina">Rodina</option>
-          <option value="WaeFoo">WaeFoo</option>
-        </select>
-      </label>
-      <label>
-        Počet dospelých
-        <select name="adults" value={adults} onChange={e => setAdults(e.target.value)}>
-          {[1,2,3,4,5,6].map(n => <option key={n} value={n}>{n}</option>)}
-        </select>
-      </label>
-      <label>
-        Počet detí
-        <select name="children" value={children} onChange={e => setChildren(e.target.value)}>
-          {[0,1,2,3,4].map(n => <option key={n} value={n}>{n}</option>)}
-        </select>
-      </label>
-      <label>
-        NUKI kód
-        <input
-          name="nukiCode"
-          value={nukiCode}
-          onChange={e => setNukiCode(e.target.value)}
-        />
-      </label>
-      <label>
-        Poznámka
-        <input
-          name="info"
-          value={info}
-          onChange={e => setInfo(e.target.value)}
-        />
-      </label>
-      <label>
-        Depozit
-        <input
-          name="deposit"
-          type="number"
-          step="0.01"
-          value={deposit === '' || isNaN(deposit) ? '' : deposit}
-          onChange={e => {
-            const val = e.target.value;
-            setDeposit(val === '' ? '' : parseFloat(val));
-          }}
-        />
-      </label>
-      <label>
-        Uhradenie depozitu
-        <input
-          name="depositDate"
-          type="date"
-          value={depositDate || ""}
-          onChange={e => setDepositDate(e.target.value)}
-        />
-      </label>
-      <label>
-        Záloha
-        <input
-          name="advance"
-          type="number"
-          step="0.01"
-          value={advance === '' || isNaN(advance) ? '' : advance}
-          onChange={e => {
-            const val = e.target.value;
-            setAdvance(val === '' ? '' : parseFloat(val));
-          }}
-        />
-      </label>
-      <label>
-        Uhradenie zálohy
-        <input
-          name="advanceDate"
-          type="date"
-          value={advanceDate || ""}
-          onChange={e => setAdvanceDate(e.target.value)}
-        />
-      </label>
-      <label>
-        Doplatok
-        <input
-          name="remaining"
-          type="number"
-          step="0.01"
-          value={remaining === '' || isNaN(remaining) ? '' : remaining}
-          onChange={e => {
-            const val = e.target.value;
-            setRemaining(val === '' ? '' : parseFloat(val));
-          }}
-        />
-      </label>
-      <label>
-        Uhradenie doplatku
-        <input
-          name="remainingDate"
-          type="date"
-          value={remainingDate || ""}
-          onChange={e => setRemainingDate(e.target.value)}
-        />
-      </label>
-      <label>
-        Spolu bez depozitu
-        <input
-          name="total"
-          type="number"
-          step="0.01"
-          readOnly
-          value={total}
-        />
-      </label>
-      <label>
-        Účet
-        <select
-          name="account"
-          value={account}
-          onChange={e => setAccount(e.target.value)}
-        >
-          <option value="">Vyberte účet</option>
-          <option value="Santander">Santander</option>
-          <option value="Revolut">Revolut</option>
-          <option value="Cash">Cash</option>
-        </select>
-      </label>
+      {/* Start and end date in one row */}
+      <div style={{ display: "flex", gap: "20px" }}>
+        <label style={{ flex: 1, marginTop: "10px" }}>
+          Dátum príchodu
+          <input name="startDate" type="date" defaultValue={initialData.startDate || ""} required />
+        </label>
+        <label style={{ flex: 1 }}>
+          Dátum odchodu
+          <input name="endDate" type="date" defaultValue={initialData.endDate || ""} required />
+        </label>
+      </div>
+      {/* Guest name full row */}
+      <div style={{ display: "flex", gap: "20px" }}>
+        <label style={{ flex: 1 }}>
+          Meno hosťa
+          <input
+            name="guestName"
+            value={guestName}
+            onChange={e => setGuestName(e.target.value)}
+            required
+          />
+        </label>
+      </div>
+      {/* Guest contact full row */}
+      <div style={{ display: "flex", gap: "20px" }}>
+        <label style={{ flex: 1 }}>
+          Kontakt
+          <input
+            name="guestContact"
+            value={guestContact}
+            onChange={e => setGuestContact(e.target.value)}
+          />
+        </label>
+      </div>
+      {/* Check-in and check-out time in one row */}
+      <div style={{ display: "flex", gap: "20px" }}>
+        <label style={{ flex: 1 }}>
+          Check-in
+          <input
+            name="checkInTime"
+            value={checkInTime}
+            onChange={e => setCheckInTime(e.target.value)}
+            placeholder="napr. 14:00"
+            defaultValue="14:00"
+          />
+        </label>
+        <label style={{ flex: 1 }}>
+          Check-out
+          <input
+            name="checkOutTime"
+            value={checkOutTime}
+            onChange={e => setCheckOutTime(e.target.value)}
+            placeholder="napr. 10:00"
+            defaultValue="10:00"
+          />
+        </label>
+      </div>
+      {/* Platform and account in one row */}
+      <div style={{ display: "flex", gap: "20px" }}>
+        <label style={{ flex: 1 }}>
+          Platforma
+          <select
+            name="platform"
+            value={platform}
+            onChange={e => setPlatform(e.target.value)}
+          >
+            <option value="">Vyberte platformu</option>
+            <option value="Facebook">Facebook</option>
+            <option value="Airbnb">Airbnb</option>
+            <option value="Booking">Booking</option>
+            <option value="Znami">Znami</option>
+            <option value="Rodina">Rodina</option>
+            <option value="WaeFoo">WaeFoo</option>
+          </select>
+        </label>
+        <label style={{ flex: 1 }}>
+          Účet
+          <select
+            name="account"
+            value={account}
+            onChange={e => setAccount(e.target.value)}
+          >
+            <option value="">Vyberte účet</option>
+            <option value="Santander">Santander</option>
+            <option value="Revolut">Revolut</option>
+            <option value="Cash">Cash</option>
+          </select>
+        </label>
+      </div>
+      {/* Adults and children in one row */}
+      <div style={{ display: "flex", gap: "20px" }}>
+        <label style={{ flex: 1 }}>
+          Počet dospelých
+          <select name="adults" value={adults} onChange={e => setAdults(e.target.value)}>
+            {[1,2,3,4,5,6].map(n => <option key={n} value={n}>{n}</option>)}
+          </select>
+        </label>
+        <label style={{ flex: 1 }}>
+          Počet detí
+          <select name="children" value={children} onChange={e => setChildren(e.target.value)}>
+            {[0,1,2,3,4].map(n => <option key={n} value={n}>{n}</option>)}
+          </select>
+        </label>
+      </div>
+      {/* NUKI code full row */}
+      <div style={{ display: "flex", gap: "20px" }}>
+        <label style={{ flex: 1 }}>
+          NUKI kód
+          <input
+            name="nukiCode"
+            value={nukiCode}
+            onChange={e => setNukiCode(e.target.value)}
+          />
+        </label>
+      </div>
+      {/* Info full row */}
+      <div style={{ display: "flex", gap: "20px" }}>
+        <label style={{ flex: 1 }}>
+          Poznámka
+          <input
+            name="info"
+            value={info}
+            onChange={e => setInfo(e.target.value)}
+          />
+        </label>
+      </div>
+      {/* Deposit and depositDate in one row */}
+      <div style={{ display: "flex", gap: "20px" }}>
+        <label style={{ flex: 1 }}>
+          Depozit
+          <input
+            name="deposit"
+            type="number"
+            step="0.01"
+            value={deposit === '' || isNaN(deposit) ? '' : deposit}
+            onChange={e => {
+              const val = e.target.value;
+              setDeposit(val === '' ? '' : parseFloat(val));
+            }}
+          />
+        </label>
+        <label style={{ flex: 1 }}>
+          Uhradenie depozitu
+          <input
+            name="depositDate"
+            type="date"
+            value={depositDate || ""}
+            onChange={e => setDepositDate(e.target.value)}
+          />
+        </label>
+      </div>
+      {/* Advance and advanceDate in one row */}
+      <div style={{ display: "flex", gap: "20px" }}>
+        <label style={{ flex: 1 }}>
+          Záloha
+          <input
+            name="advance"
+            type="number"
+            step="0.01"
+            value={advance === '' || isNaN(advance) ? '' : advance}
+            onChange={e => {
+              const val = e.target.value;
+              setAdvance(val === '' ? '' : parseFloat(val));
+            }}
+          />
+        </label>
+        <label style={{ flex: 1 }}>
+          Uhradenie zálohy
+          <input
+            name="advanceDate"
+            type="date"
+            value={advanceDate || ""}
+            onChange={e => setAdvanceDate(e.target.value)}
+          />
+        </label>
+      </div>
+      {/* Remaining and remainingDate in one row */}
+      <div style={{ display: "flex", gap: "20px" }}>
+        <label style={{ flex: 1 }}>
+          Doplatok
+          <input
+            name="remaining"
+            type="number"
+            step="0.01"
+            value={remaining === '' || isNaN(remaining) ? '' : remaining}
+            onChange={e => {
+              const val = e.target.value;
+              setRemaining(val === '' ? '' : parseFloat(val));
+            }}
+          />
+        </label>
+        <label style={{ flex: 1 }}>
+          Uhradenie doplatku
+          <input
+            name="remainingDate"
+            type="date"
+            value={remainingDate || ""}
+            onChange={e => setRemainingDate(e.target.value)}
+          />
+        </label>
+      </div>
+      {/* Total (full width, read only) */}
+      <div style={{ display: "flex", gap: "20px" }}>
+        <label style={{ flex: 1 }}>
+          Spolu (bez depozitu)
+          <input
+            name="total"
+            type="number"
+            step="0.01"
+            readOnly
+            value={total}
+          />
+        </label>
+      </div>
       <button type="submit" style={{ padding: "10px", backgroundColor: submitColor, color: "white", border: "none" }}>
         {submitLabel}
       </button>
