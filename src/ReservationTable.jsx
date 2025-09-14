@@ -71,7 +71,7 @@ function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, su
     >
       {/* Start and end date in one row */}
       <div style={{ display: "flex", gap: "20px" }}>
-        <label style={{ flex: 1, marginTop: "10px" }}>
+        <label style={{ flex: 1 }}>
           Dátum príchodu
           <input name="startDate" type="date" defaultValue={initialData.startDate || ""} required />
         </label>
@@ -109,20 +109,16 @@ function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, su
           Check-in
           <input
             name="checkInTime"
-            value={checkInTime}
+            value={checkInTime || "14:00"}
             onChange={e => setCheckInTime(e.target.value)}
-            placeholder="napr. 14:00"
-            defaultValue="14:00"
           />
         </label>
         <label style={{ flex: 1 }}>
           Check-out
           <input
             name="checkOutTime"
-            value={checkOutTime}
+            value={checkOutTime || "10:00"}
             onChange={e => setCheckOutTime(e.target.value)}
-            placeholder="napr. 10:00"
-            defaultValue="10:00"
           />
         </label>
       </div>
@@ -402,7 +398,6 @@ function ReservationTable() {
   if (loading) return <p>Načítavam rezervácie</p>;
 
   // Compute totals for deposit, advance, remaining, and total
-  const totalDeposit = reservations.reduce((sum, r) => sum + (r.deposit || 0), 0);
   const totalAdvance = reservations.reduce((sum, r) => sum + (r.advance || 0), 0);
   const totalRemaining = reservations.reduce((sum, r) => sum + (r.remaining || 0), 0);
   const totalSum = reservations.reduce((sum, r) => sum + (r.total || 0), 0);
@@ -576,7 +571,7 @@ function ReservationTable() {
             <th style={cellStyle}>Deti</th>
             <th style={cellStyle}>NUKI kód</th>
             <th style={cellStyle}>Poznámka</th>
-            <th style={cellStyle}>Depozit ({formatCurrency(totalDeposit)})</th>
+            <th style={cellStyle}>Depozit</th>
             <th style={cellStyle}>Uhradenie depozitu</th>
             <th style={cellStyle}>Záloha ({formatCurrency(totalAdvance)})</th>
             <th style={cellStyle}>Uhradenie zálohy</th>
