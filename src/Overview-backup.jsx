@@ -468,10 +468,11 @@ function Overview() {
               </tbody>
             </table>
 
-            <h5 style={{ marginTop: "30px" }}>Zoznam nákladov v roku {year}</h5>
+            <h5 style={{ marginTop: "30px" }}>Zoznam nákladov</h5>
             <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "10px" }}>
               <thead>
                 <tr style={{ background: "#f0f0f0" }}>
+                  <th style={cellStyle}>Rok</th>
                   <th style={cellStyle}>Mesiac</th>
                   <th style={cellStyle}>Kategória</th>
                   <th style={cellStyle}>Suma</th>
@@ -481,57 +482,56 @@ function Overview() {
               <tbody>
                 {expensesForYear.length === 0 && (
                   <tr>
-                    <td style={cellStyle} colSpan={4} align="center">Žiadne náklady</td>
+                    <td style={cellStyle} colSpan={5} align="center">Žiadne náklady</td>
                   </tr>
                 )}
-                {expensesForYear
-                  .sort((a, b) => parseInt(a.month, 10) - parseInt(b.month, 10))
-                  .map((exp) => {
-                    const monthName = exp.month ? monthsSK[parseInt(exp.month, 10) - 1] || "" : "";
-                    return (
-                      <tr key={exp.expenseId}>
-                        <td style={cellStyle}>{monthName}</td>
-                        <td style={cellStyle}>{exp.category}</td>
-                        <td style={cellStyle}>
-                          {new Intl.NumberFormat("sk-SK", {
-                            style: "currency",
-                            currency: "EUR",
-                          }).format(parseFloat(exp.amount))}
-                        </td>
-                        <td style={cellStyle}>
-                          <button
-                            style={{
-                              marginRight: "8px",
-                              padding: "4px 8px",
-                              borderRadius: "3px",
-                              border: "1px solid #007bff",
-                              background: "#007bff",
-                              color: "white",
-                              cursor: "pointer",
-                              fontSize: "0.9em"
-                            }}
-                            onClick={() => openEditModal(exp)}
-                          >
-                            Upraviť
-                          </button>
-                          <button
-                            style={{
-                              padding: "4px 8px",
-                              borderRadius: "3px",
-                              border: "1px solid #dc3545",
-                              background: "#dc3545",
-                              color: "white",
-                              cursor: "pointer",
-                              fontSize: "0.9em"
-                            }}
-                            onClick={() => deleteExpense(exp.expenseId)}
-                          >
-                            Zmazať
-                          </button>
-                        </td>
-                      </tr>
-                    );
-                  })}
+                {expensesForYear.map((exp) => {
+                  const monthName = exp.month ? monthsSK[parseInt(exp.month, 10) - 1] || "" : "";
+                  return (
+                    <tr key={exp.expenseId}>
+                      <td style={cellStyle}>{exp.year}</td>
+                      <td style={cellStyle}>{monthName}</td>
+                      <td style={cellStyle}>{exp.category}</td>
+                      <td style={cellStyle}>
+                        {new Intl.NumberFormat("sk-SK", {
+                          style: "currency",
+                          currency: "EUR",
+                        }).format(parseFloat(exp.amount))}
+                      </td>
+                      <td style={cellStyle}>
+                        <button
+                          style={{
+                            marginRight: "8px",
+                            padding: "4px 8px",
+                            borderRadius: "3px",
+                            border: "1px solid #007bff",
+                            background: "#007bff",
+                            color: "white",
+                            cursor: "pointer",
+                            fontSize: "0.9em"
+                          }}
+                          onClick={() => openEditModal(exp)}
+                        >
+                          Upraviť
+                        </button>
+                        <button
+                          style={{
+                            padding: "4px 8px",
+                            borderRadius: "3px",
+                            border: "1px solid #dc3545",
+                            background: "#dc3545",
+                            color: "white",
+                            cursor: "pointer",
+                            fontSize: "0.9em"
+                          }}
+                          onClick={() => deleteExpense(exp.expenseId)}
+                        >
+                          Zmazať
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
