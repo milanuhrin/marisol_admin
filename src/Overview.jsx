@@ -468,7 +468,7 @@ function Overview() {
               </tbody>
             </table>
 
-            <h5 style={{ marginTop: "30px" }}>Zoznam nákladov v roku {year}</h5>
+            <h3 style={{ marginTop: "30px" }}>Zoznam nákladov v roku {year}</h3>
             <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "10px" }}>
               <thead>
                 <tr style={{ background: "#f0f0f0" }}>
