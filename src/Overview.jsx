@@ -388,11 +388,6 @@ function Overview() {
         // Filter expenses for this year
         const expensesForYear = expensesList.filter(exp => String(exp.year) === year);
 
-        <Charts year={year} months={monthsSorted.map(mk => ({
-          key: mk,
-          label: new Date(`${mk}-01`).toLocaleString("sk-SK", { month: "long" })
-        }))} totals={months} />
-
         return (
           <div key={year} style={{ marginBottom: "40px" }}>
             <h4>{year}</h4>
@@ -458,6 +453,15 @@ function Overview() {
                 </tr>
               </tbody>
             </table>
+
+            <Charts
+              year={year}
+              months={monthsSorted.map(mk => ({
+                key: mk,
+                label: new Date(`${mk}-01`).toLocaleString("sk-SK", { month: "long" })
+              }))}
+              totals={months}
+            />
 
             <h3 style={{ marginTop: "30px" }}>Zoznam nákladov v roku {year}</h3>
             <button
