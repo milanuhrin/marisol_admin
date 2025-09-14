@@ -9,8 +9,8 @@ function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, su
   // Controlled state for all fields except startDate/endDate
   const [guestName, setGuestName] = useState(initialData.guestName || "");
   const [guestContact, setGuestContact] = useState(initialData.guestContact || "");
-  const [checkInTime, setCheckInTime] = useState(initialData.checkInTime || "");
-  const [checkOutTime, setCheckOutTime] = useState(initialData.checkOutTime || "");
+  const [checkInTime, setCheckInTime] = useState(initialData.checkInTime || "14:00");
+  const [checkOutTime, setCheckOutTime] = useState(initialData.checkOutTime || "10:00");
   const [platform, setPlatform] = useState(initialData.platform || "");
   const [info, setInfo] = useState(initialData.info || "");
   const [deposit, setDeposit] = useState(
