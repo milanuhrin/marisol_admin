@@ -19,7 +19,7 @@ function AdminPanel({ signOut }) {
           border: "none",
           borderRadius: "24px",
           padding: "10px 28px",
-          fontSize: "1rem",
+          fontSize: "1.5rem",
           fontWeight: "bold",
           cursor: "pointer",
           marginBottom: "18px",
@@ -31,7 +31,7 @@ function AdminPanel({ signOut }) {
         Logout
       </button>
 
-      <h2>Administracia</h2>
+      <h2>Administrácia</h2>
 
       <ReservationTable />
     </div>

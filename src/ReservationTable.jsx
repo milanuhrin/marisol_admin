@@ -169,17 +169,6 @@ function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, su
           </select>
         </label>
       </div>
-      {/* NUKI code full row */}
-      <div style={{ display: "flex", gap: "20px" }}>
-        <label style={{ flex: 1 }}>
-          NUKI kód
-          <input
-            name="nukiCode"
-            value={nukiCode}
-            onChange={e => setNukiCode(e.target.value)}
-          />
-        </label>
-      </div>
       {/* Info full row */}
       <div style={{ display: "flex", gap: "20px" }}>
         <label style={{ flex: 1 }}>
@@ -276,6 +265,17 @@ function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, su
             step="0.01"
             readOnly
             value={total}
+          />
+        </label>
+      </div>
+      {/* NUKI code full row (moved here) */}
+      <div style={{ display: "flex", gap: "20px" }}>
+        <label style={{ flex: 1 }}>
+          NUKI kód
+          <input
+            name="nukiCode"
+            value={nukiCode}
+            onChange={e => setNukiCode(e.target.value)}
           />
         </label>
       </div>
@@ -404,7 +404,7 @@ function ReservationTable() {
 
   return (
     <div style={{ marginTop: "30px", marginBottom: "50px" }}>
-      <h3>Rezervácie</h3>
+      <h3>Zoznam rezervácií</h3>
       <style>{`
         .new-reservation-btn {
           background-color: #007bff;
@@ -413,7 +413,7 @@ function ReservationTable() {
           border: none;
           border-radius: 20px;
           cursor: pointer;
-          font-size: 16px;
+          font-size: 20px;
           font-weight: bold;
           margin-bottom: 20px;
           transition: background-color 0.2s;
@@ -426,7 +426,7 @@ function ReservationTable() {
         onClick={() => setShowForm(!showForm)}
         className="new-reservation-btn"
       >
-        {showForm ? "Skryť formulár" : "➕ Nová rezervácia"}
+        {showForm ? "Skryť formulár" : "Nová rezervácia"}
       </button>
 
       {showForm && (
@@ -569,7 +569,6 @@ function ReservationTable() {
             <th style={cellStyle}>Check-in/out</th>
             <th style={cellStyle}>Dospelí</th>
             <th style={cellStyle}>Deti</th>
-            <th style={cellStyle}>NUKI kód</th>
             <th style={cellStyle}>Poznámka</th>
             <th style={cellStyle}>Depozit</th>
             <th style={cellStyle}>Uhradenie depozitu</th>
@@ -578,6 +577,7 @@ function ReservationTable() {
             <th style={cellStyle}>Doplatok ({formatCurrency(totalRemaining)})</th>
             <th style={cellStyle}>Uhradenie doplatku</th>
             <th style={cellStyle}>Spolu ({formatCurrency(totalSum)})</th>
+            <th style={cellStyle}>NUKI kód</th>
             <th style={cellStyle}>Účet</th>
             <th style={cellStyle}>Akcie</th>
           </tr>
@@ -599,7 +599,6 @@ function ReservationTable() {
               </td>
               <td style={cellStyle}>{res.adults}</td>
               <td style={cellStyle}>{res.children}</td>
-              <td style={cellStyle}>{res.nukiCode || "-"}</td>
               <td style={cellStyle}>{res.info}</td>
               {/* Financial fields in order: deposit, depositDate, advance, advanceDate, remaining, remainingDate, total */}
               <td style={cellStyle}>{formatCurrency(res.deposit)}</td>
@@ -609,6 +608,7 @@ function ReservationTable() {
               <td style={cellStyle}>{formatCurrency(res.remaining)}</td>
               <td style={cellStyle}>{res.remainingDate ? formatDate(res.remainingDate) : "-"}</td>
               <td style={cellStyle}>{formatCurrency(res.total)}</td>
+              <td style={cellStyle}>{res.nukiCode || "-"}</td>
               <td style={cellStyle}>{res.account || "-"}</td>
               <td style={cellStyle}>
                 <button onClick={() => setShowEditForm(res)}>Upraviť</button>
