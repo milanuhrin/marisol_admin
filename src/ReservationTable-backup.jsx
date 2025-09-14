@@ -216,7 +216,7 @@ function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, su
         />
       </label>
       <label>
-        Uhradenie doplatku
+        Dátum uhradenia doplatku
         <input
           name="remainingDate"
           type="date"
