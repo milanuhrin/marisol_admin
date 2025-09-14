@@ -410,10 +410,11 @@ function ReservationTable() {
           background-color: #007bff;
           color: white;
           padding: 10px 20px;
-          border: none;
+          border: 1px;
+          border-color: #000000;
           border-radius: 20px;
           cursor: pointer;
-          font-size: 20px;
+          font-size: 14px;
           font-weight: bold;
           margin-bottom: 20px;
           transition: background-color 0.2s;

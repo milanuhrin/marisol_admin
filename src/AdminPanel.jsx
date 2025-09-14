@@ -2,6 +2,8 @@
 import PropTypes from "prop-types";
 import "./App.css"; // Import styles
 import ReservationTable from "./ReservationTable";
+import Overview from "./Overview";
+
 
 function AdminPanel({ signOut }) {
   return (
@@ -34,6 +36,8 @@ function AdminPanel({ signOut }) {
       <h2>Administrácia</h2>
 
       <ReservationTable />
+
+      <Overview />
     </div>
   );
 }
