@@ -17,6 +17,17 @@ function Overview() {
   const [submittingExpense, setSubmittingExpense] = useState(false);
   const [expenseError, setExpenseError] = useState(null);
   const [expensesList, setExpensesList] = useState([]);
+  // Edit expense modal state
+  const [editExpenseModal, setEditExpenseModal] = useState(false);
+  const [editExpenseForm, setEditExpenseForm] = useState({
+    year: "",
+    month: "",
+    category: "",
+    amount: "",
+  });
+  const [editingExpenseId, setEditingExpenseId] = useState(null);
+  const [submittingEdit, setSubmittingEdit] = useState(false);
+  const [editError, setEditError] = useState(null);
 
   // Slovak month names, 1-based
   const monthsSK = [
@@ -64,8 +75,9 @@ function Overview() {
       const expensesByYearMonth = {};
       if (dataExp.success && Array.isArray(dataExp.expenses)) {
         dataExp.expenses.forEach((exp) => {
-          if (exp.date && exp.amount) {
-            const [year, month] = exp.date.split("-");
+          if (exp.year && exp.month && exp.amount) {
+            const year = String(exp.year);
+            const month = String(exp.month).padStart(2, "0");
             const key = `${year}-${month}`;
             expensesByYearMonth[year] = expensesByYearMonth[year] || {};
             expensesByYearMonth[year][key] = (expensesByYearMonth[year][key] || 0) + parseFloat(exp.amount);
@@ -117,10 +129,9 @@ function Overview() {
     e.preventDefault();
     setSubmittingExpense(true);
     setExpenseError(null);
-    // Build date string
-    const date = `${expenseForm.year}-${expenseForm.month.padStart(2, "0")}`;
     const payload = {
-      date,
+      year: parseInt(expenseForm.year, 10),
+      month: parseInt(expenseForm.month, 10),
       category: expenseForm.category,
       amount: parseFloat(expenseForm.amount),
     };
@@ -150,20 +161,77 @@ function Overview() {
     }
   };
 
-  const handleEdit = (expense) => {
-    alert(JSON.stringify(expense));
+  // Open edit modal and populate form
+  const openEditModal = (expense) => {
+    setEditExpenseModal(true);
+    setEditExpenseForm({
+      year: String(expense.year),
+      month: String(expense.month),
+      category: expense.category,
+      amount: String(expense.amount),
+    });
+    setEditingExpenseId(expense.expenseId);
+    setEditError(null);
+    setSubmittingEdit(false);
   };
 
-  const deleteExpense = async (id) => {
+  // Controlled input for edit modal
+  const handleEditChange = (e) => {
+    const { name, value } = e.target;
+    setEditExpenseForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  // Submit edited expense
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    setSubmittingEdit(true);
+    setEditError(null);
+    const payload = {
+      year: parseInt(editExpenseForm.year, 10),
+      month: parseInt(editExpenseForm.month, 10),
+      category: editExpenseForm.category,
+      amount: parseFloat(editExpenseForm.amount),
+    };
+    try {
+      const resp = await fetch(`${EXPENSES_API_URL}/${editingExpenseId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      const data = await resp.json();
+      if (!data.success) {
+        setEditError("Nepodarilo sa uložiť úpravu nákladu.");
+      } else {
+        setEditExpenseModal(false);
+        setEditExpenseForm({
+          year: "",
+          month: "",
+          category: "",
+          amount: "",
+        });
+        setEditingExpenseId(null);
+        await fetchData();
+      }
+    } catch {
+      setEditError("Chyba pri ukladaní.");
+    } finally {
+      setSubmittingEdit(false);
+    }
+  };
+
+  const deleteExpense = async (expenseId) => {
     if (!window.confirm("Naozaj chcete zmazať tento náklad?")) return;
     try {
-      const resp = await fetch(`${EXPENSES_API_URL}/${id}`, {
+      const resp = await fetch(`${EXPENSES_API_URL}/${expenseId}`, {
         method: "DELETE",
       });
       const data = await resp.json();
       if (data.success) {
         // Remove from local state
-        setExpensesList((prev) => prev.filter((exp) => exp.id !== id));
+        setExpensesList((prev) => prev.filter((exp) => exp.expenseId !== expenseId));
         // Refetch totals to update display
         await fetchData();
       } else {
@@ -332,7 +400,7 @@ function Overview() {
         });
 
         // Filter expenses for this year
-        const expensesForYear = expensesList.filter(exp => exp.date && exp.date.startsWith(year));
+        const expensesForYear = expensesList.filter(exp => String(exp.year) === year);
 
         return (
           <div key={year} style={{ marginBottom: "40px" }}>
@@ -418,11 +486,10 @@ function Overview() {
                   </tr>
                 )}
                 {expensesForYear.map((exp) => {
-                  const [expYear, expMonth] = exp.date ? exp.date.split("-") : ["", ""];
-                  const monthName = monthsSK[parseInt(expMonth, 10) - 1] || "";
+                  const monthName = exp.month ? monthsSK[parseInt(exp.month, 10) - 1] || "" : "";
                   return (
-                    <tr key={exp.id}>
-                      <td style={cellStyle}>{expYear}</td>
+                    <tr key={exp.expenseId}>
+                      <td style={cellStyle}>{exp.year}</td>
                       <td style={cellStyle}>{monthName}</td>
                       <td style={cellStyle}>{exp.category}</td>
                       <td style={cellStyle}>
@@ -443,7 +510,7 @@ function Overview() {
                             cursor: "pointer",
                             fontSize: "0.9em"
                           }}
-                          onClick={() => handleEdit(exp)}
+                          onClick={() => openEditModal(exp)}
                         >
                           Upraviť
                         </button>
@@ -457,7 +524,7 @@ function Overview() {
                             cursor: "pointer",
                             fontSize: "0.9em"
                           }}
-                          onClick={() => deleteExpense(exp.id)}
+                          onClick={() => deleteExpense(exp.expenseId)}
                         >
                           Zmazať
                         </button>
@@ -470,6 +537,125 @@ function Overview() {
           </div>
         );
       })}
+      {/* Edit Expense Modal */}
+      {editExpenseModal && (
+        <div style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100vw",
+          height: "100vh",
+          background: "rgba(0,0,0,0.3)",
+          zIndex: 1000,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center"
+        }}>
+          <div style={{
+            background: "white",
+            padding: "30px",
+            borderRadius: "8px",
+            minWidth: "320px",
+            boxShadow: "0 2px 16px rgba(0,0,0,0.15)",
+            position: "relative"
+          }}>
+            <button
+              style={{
+                position: "absolute",
+                top: "10px",
+                right: "10px",
+                background: "transparent",
+                border: "none",
+                fontSize: "22px",
+                cursor: "pointer"
+              }}
+              onClick={() => setEditExpenseModal(false)}
+              aria-label="Zavrieť"
+            >×</button>
+            <h4>Upraviť náklad</h4>
+            <form onSubmit={handleEditSubmit}>
+              <div style={{ marginBottom: "14px" }}>
+                <label>
+                  Rok:&nbsp;
+                  <select
+                    name="year"
+                    value={editExpenseForm.year}
+                    onChange={handleEditChange}
+                    style={{ padding: "6px", borderRadius: "3px" }}
+                  >
+                    {Array.from({ length: 6 }, (_, i) => 2025 + i).map((y) => (
+                      <option key={y} value={y}>{y}</option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+              <div style={{ marginBottom: "14px" }}>
+                <label>
+                  Mesiac:&nbsp;
+                  <select
+                    name="month"
+                    value={editExpenseForm.month}
+                    onChange={handleEditChange}
+                    style={{ padding: "6px", borderRadius: "3px" }}
+                  >
+                    {monthsSK.map((m, i) => (
+                      <option key={i + 1} value={String(i + 1)}>{m}</option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+              <div style={{ marginBottom: "14px" }}>
+                <label>
+                  Kategória:&nbsp;
+                  <select
+                    name="category"
+                    value={editExpenseForm.category}
+                    onChange={handleEditChange}
+                    style={{ padding: "6px", borderRadius: "3px" }}
+                  >
+                    {categories.map((cat) => (
+                      <option key={cat} value={cat}>{cat}</option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+              <div style={{ marginBottom: "14px" }}>
+                <label>
+                  Suma (€):&nbsp;
+                  <input
+                    type="number"
+                    name="amount"
+                    value={editExpenseForm.amount}
+                    min="0"
+                    step="0.01"
+                    onChange={handleEditChange}
+                    required
+                    style={{ padding: "6px", borderRadius: "3px", width: "100px" }}
+                  />
+                </label>
+              </div>
+              {editError && (
+                <div style={{ color: "red", marginBottom: "8px" }}>{editError}</div>
+              )}
+              <button
+                type="submit"
+                disabled={submittingEdit}
+                style={{
+                  background: "#007bff",
+                  color: "white",
+                  border: "none",
+                  padding: "8px 16px",
+                  borderRadius: "4px",
+                  fontWeight: "bold",
+                  cursor: submittingEdit ? "not-allowed" : "pointer"
+                }}
+              >
+                {submittingEdit ? "Ukladám..." : "Uložiť"}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
