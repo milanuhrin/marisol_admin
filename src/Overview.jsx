@@ -1,5 +1,6 @@
 // Overview.jsx
 import { useEffect, useState } from "react";
+import Charts from "./Charts";
 
 const RESERVATIONS_API_URL = "https://eb8ya8rtoc.execute-api.us-east-1.amazonaws.com/main/reservation";
 const EXPENSES_API_URL = "https://eb8ya8rtoc.execute-api.us-east-1.amazonaws.com/main/expenses";
@@ -386,6 +387,11 @@ function Overview() {
 
         // Filter expenses for this year
         const expensesForYear = expensesList.filter(exp => String(exp.year) === year);
+
+        <Charts year={year} months={monthsSorted.map(mk => ({
+          key: mk,
+          label: new Date(`${mk}-01`).toLocaleString("sk-SK", { month: "long" })
+        }))} totals={months} />
 
         return (
           <div key={year} style={{ marginBottom: "40px" }}>
