@@ -249,21 +249,6 @@ function Overview() {
   return (
     <div style={{ marginTop: "30px" }}>
       <h3>Prehľad tržieb a nákladov podľa rokov</h3>
-      <button
-        style={{
-          marginBottom: "20px",
-          background: "#007bff",
-          color: "white",
-          border: "none",
-          padding: "10px 20px",
-          borderRadius: "4px",
-          cursor: "pointer",
-          fontWeight: "bold"
-        }}
-        onClick={() => setShowExpenseModal(true)}
-      >
-        Pridať nový náklad
-      </button>
 
       {showExpenseModal && (
         <div style={{
@@ -469,6 +454,21 @@ function Overview() {
             </table>
 
             <h3 style={{ marginTop: "30px" }}>Zoznam nákladov v roku {year}</h3>
+            <button
+              style={{
+                marginBottom: "20px",
+                background: "#007bff",
+                color: "white",
+                border: "none",
+                padding: "10px 20px",
+                borderRadius: "4px",
+                cursor: "pointer",
+                fontWeight: "bold"
+              }}
+              onClick={() => setShowExpenseModal(true)}
+            >
+              Pridať nový náklad
+            </button>
             <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "10px" }}>
               <thead>
                 <tr style={{ background: "#f0f0f0" }}>
