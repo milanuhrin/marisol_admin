@@ -32,16 +32,19 @@ ChartJS.register(
  * @param {Object} props.totals - keyed by monthKey, value: { revenues, expenses }
  */
 const Charts = ({ year, months, totals }) => {
+  // Safe fallback for months and totals
+  const safeMonths = Array.isArray(months) ? months : [];
+  const safeTotals = totals && typeof totals === 'object' ? totals : {};
   // Prepare labels and datasets
-  const labels = months.map((m) => m.label);
-  const revenues = months.map((m) =>
-    totals[m.key] && typeof totals[m.key].revenues === 'number'
-      ? totals[m.key].revenues
+  const labels = safeMonths.map((m) => m.label);
+  const revenues = safeMonths.map((m) =>
+    safeTotals[m.key] && typeof safeTotals[m.key].revenues === 'number'
+      ? safeTotals[m.key].revenues
       : 0
   );
-  const expenses = months.map((m) =>
-    totals[m.key] && typeof totals[m.key].expenses === 'number'
-      ? totals[m.key].expenses
+  const expenses = safeMonths.map((m) =>
+    safeTotals[m.key] && typeof safeTotals[m.key].expenses === 'number'
+      ? safeTotals[m.key].expenses
       : 0
   );
   const profit = revenues.map((rev, idx) => rev - expenses[idx]);
@@ -127,14 +130,20 @@ const Charts = ({ year, months, totals }) => {
 };
 
 Charts.propTypes = {
-  year: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
+  year: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   months: PropTypes.arrayOf(
     PropTypes.shape({
-      key: PropTypes.string.isRequired,
-      label: PropTypes.string.isRequired,
+      key: PropTypes.string,
+      label: PropTypes.string,
     })
-  ).isRequired,
-  totals: PropTypes.object.isRequired,
+  ),
+  totals: PropTypes.object,
+};
+
+Charts.defaultProps = {
+  year: '',
+  months: [],
+  totals: {},
 };
 
 export default Charts;

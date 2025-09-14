@@ -459,11 +459,11 @@ function Overview() {
             <div style={{ marginTop: "18px" }}>
               <Charts
                 year={year}
-                months={monthsSorted.map(mk => ({
+                months={monthsSorted?.map(mk => ({
                   key: mk,
                   label: new Date(`${mk}-01`).toLocaleString("sk-SK", { month: "long" })
-                }))}
-                totals={months}
+                })) || []}
+                totals={months || {}}
               />
             </div>
 
