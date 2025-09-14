@@ -13,6 +13,20 @@ function AdminPanel({ signOut }) {
             window.location.href = "https://marisol.sk/";
           }, 1000); // Small delay to ensure logout completes
         }}
+        style={{
+          backgroundColor: "#e53935",
+          color: "#fff",
+          border: "none",
+          borderRadius: "24px",
+          padding: "10px 28px",
+          fontSize: "1rem",
+          fontWeight: "bold",
+          cursor: "pointer",
+          marginBottom: "18px",
+          transition: "background 0.2s"
+        }}
+        onMouseOver={e => (e.currentTarget.style.backgroundColor = "#b71c1c")}
+        onMouseOut={e => (e.currentTarget.style.backgroundColor = "#e53935")}
       >
         Logout
       </button>
