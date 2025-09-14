@@ -115,7 +115,6 @@ function Overview() {
 
   useEffect(() => {
     fetchData();
-    // eslint-disable-next-line
   }, []);
 
   const handleExpenseChange = (e) => {
