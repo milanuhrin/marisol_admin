@@ -410,7 +410,27 @@ function ReservationTable() {
   return (
     <div style={{ marginTop: "30px", marginBottom: "50px" }}>
       <h3>Rezervácie</h3>
-      <button onClick={() => setShowForm(!showForm)} style={{ marginBottom: "20px" }}>
+      <style>{`
+        .new-reservation-btn {
+          background-color: #007bff;
+          color: white;
+          padding: 10px 20px;
+          border: none;
+          border-radius: 20px;
+          cursor: pointer;
+          font-size: 16px;
+          font-weight: bold;
+          margin-bottom: 20px;
+          transition: background-color 0.2s;
+        }
+        .new-reservation-btn:hover {
+          background-color: #0056b3;
+        }
+      `}</style>
+      <button
+        onClick={() => setShowForm(!showForm)}
+        className="new-reservation-btn"
+      >
         {showForm ? "Skryť formulár" : "➕ Nová rezervácia"}
       </button>
 
