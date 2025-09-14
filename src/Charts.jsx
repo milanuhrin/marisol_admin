@@ -3,22 +3,20 @@ import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
-  BarElement,
   LineElement,
   PointElement,
   Legend,
   Tooltip,
   Title,
 } from 'chart.js';
-import { Bar } from 'react-chartjs-2';
+import { Line } from 'react-chartjs-2';
 
-// Register Chart.js components
+// Register Chart.js components for line chart
 ChartJS.register(
   CategoryScale,
   LinearScale,
-  BarElement,
-  LineElement,
   PointElement,
+  LineElement,
   Legend,
   Tooltip,
   Title
@@ -53,34 +51,37 @@ const Charts = ({ year, months, totals }) => {
     labels,
     datasets: [
       {
-        type: 'bar',
-        label: 'Revenues',
+        label: 'Tržby',
         data: revenues,
-        backgroundColor: 'rgba(54, 162, 235, 0.7)',
         borderColor: 'rgba(54, 162, 235, 1)',
-        borderWidth: 1,
-        yAxisID: 'y',
+        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+        fill: false,
+        tension: 0.3,
+        pointBackgroundColor: 'rgba(54, 162, 235, 1)',
+        pointBorderColor: 'rgba(54, 162, 235, 1)',
+        pointStyle: 'circle',
       },
       {
-        type: 'bar',
-        label: 'Expenses',
+        label: 'Náklady',
         data: expenses,
-        backgroundColor: 'rgba(255, 99, 132, 0.7)',
         borderColor: 'rgba(255, 99, 132, 1)',
-        borderWidth: 1,
-        yAxisID: 'y',
+        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+        fill: false,
+        tension: 0.3,
+        pointBackgroundColor: 'rgba(255, 99, 132, 1)',
+        pointBorderColor: 'rgba(255, 99, 132, 1)',
+        pointStyle: 'rect',
       },
       {
-        type: 'line',
-        label: 'Profit',
+        label: 'Zisk',
         data: profit,
         borderColor: 'rgba(75, 192, 75, 1)',
         backgroundColor: 'rgba(75, 192, 75, 0.2)',
         fill: false,
-        yAxisID: 'y',
-        tension: 0.2,
+        tension: 0.3,
         pointBackgroundColor: 'rgba(75, 192, 75, 1)',
         pointBorderColor: 'rgba(75, 192, 75, 1)',
+        pointStyle: 'triangle',
       },
     ],
   };
@@ -93,7 +94,7 @@ const Charts = ({ year, months, totals }) => {
       },
       title: {
         display: true,
-        text: `Revenues, Expenses & Profit - ${year}`,
+        text: `Tržby, Náklady & Zisk - ${year}`,
       },
       tooltip: {
         mode: 'index',
@@ -124,7 +125,7 @@ const Charts = ({ year, months, totals }) => {
 
   return (
     <div>
-      <Bar data={chartData} options={chartOptions} />
+      <Line data={chartData} options={chartOptions} />
     </div>
   );
 };
