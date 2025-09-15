@@ -1,5 +1,5 @@
 // Expenses.jsx
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 
 const currentMonth = new Date().getMonth() + 1; // 1-12
@@ -12,6 +12,7 @@ function Expenses({
   monthsSK = [],
   categories = [],
   onExpensesChanged,
+  loadingExpenses = false,
 }) {
   const [showExpenseModal, setShowExpenseModal] = useState(false);
   const [expenseForm, setExpenseForm] = useState({
@@ -150,13 +151,28 @@ function Expenses({
   const safeCategories = Array.isArray(categories) ? categories : [];
   const expensesForYear = safeExpensesList.filter((exp) => String(exp.year) === String(year));
 
-  console.log("📦 Expenses received:", expensesList, "for year:", year);
+  // Local loading state for when waiting for expensesList to arrive
+  const [loadingState, setLoadingState] = useState(
+    loadingExpenses || (safeExpensesList.length === 0)
+  );
+
+  useEffect(() => {
+    // Set loading state if loadingExpenses is true or expensesList is empty
+    if (loadingExpenses || safeExpensesList.length === 0) {
+      setLoadingState(true);
+    } else {
+      setLoadingState(false);
+    }
+  }, [loadingExpenses, expensesList]);
+
+  console.log("📦 Expenses received:", expensesList, "for year:", year, "loading:", loadingExpenses);
 
   return (
     <div>
       <h3 style={{ marginTop: "30px" }}>
         Zoznam nákladov v roku {year || new Date().getFullYear()}
-      </h3>      <button
+      </h3>
+      <button
         style={{
           marginBottom: "20px",
           background: "#007bff",
@@ -172,79 +188,83 @@ function Expenses({
         Nový náklad
       </button>
 
-      <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "10px" }}>
-        <thead>
-          <tr style={{ background: "#f0f0f0" }}>
-            <th style={cellStyle}>Mesiac</th>
-            <th style={{ ...cellStyle, whiteSpace: "nowrap" }}>Kategória</th>
-            <th style={cellStyle}>Poznámka</th>
-            <th style={cellStyle}>Suma</th>
-            <th style={cellStyle}>Akcie</th>
-          </tr>
-        </thead>
-        <tbody>
-          {expensesForYear.length === 0 && (
-            <tr>
-              <td style={cellStyle} colSpan={5} align="center">
-                Žiadne náklady
-              </td>
+      {loadingState ? (
+        <p>Načítavam náklady...</p>
+      ) : (
+        <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "10px" }}>
+          <thead>
+            <tr style={{ background: "#f0f0f0" }}>
+              <th style={cellStyle}>Mesiac</th>
+              <th style={{ ...cellStyle, whiteSpace: "nowrap" }}>Kategória</th>
+              <th style={cellStyle}>Poznámka</th>
+              <th style={cellStyle}>Suma</th>
+              <th style={cellStyle}>Akcie</th>
             </tr>
-          )}
-          {expensesForYear
-            .sort((a, b) => parseInt(a.month, 10) - parseInt(b.month, 10))
-            .map((exp) => {
-              const monthName =
-                exp.month && safeMonthsSK[parseInt(exp.month, 10) - 1]
-                  ? safeMonthsSK[parseInt(exp.month, 10) - 1]
-                  : "";
-              return (
-                <tr key={exp.expenseId}>
-                  <td style={cellStyle}>{monthName}</td>
-                  <td style={{ ...cellStyle, whiteSpace: "nowrap" }}>{exp.category}</td>
-                  <td style={cellStyle}>{exp.note || ""}</td>
-                  <td style={cellStyle}>
-                    {new Intl.NumberFormat("sk-SK", {
-                      style: "currency",
-                      currency: "EUR",
-                    }).format(parseFloat(exp.amount))}
-                  </td>
-                  <td style={cellStyle}>
-                    <div style={{ display: "flex", gap: "6px" }}>
-                      <button
-                        style={{
-                          padding: "4px 8px",
-                          borderRadius: "3px",
-                          border: "1px solid #007bff",
-                          background: "#007bff",
-                          color: "white",
-                          cursor: "pointer",
-                          fontSize: "0.9em",
-                        }}
-                        onClick={() => openEditModal(exp)}
-                      >
-                        Upraviť
-                      </button>
-                      <button
-                        style={{
-                          padding: "4px 8px",
-                          borderRadius: "3px",
-                          border: "1px solid #dc3545",
-                          background: "#dc3545",
-                          color: "white",
-                          cursor: "pointer",
-                          fontSize: "0.9em",
-                        }}
-                        onClick={() => deleteExpense(exp.expenseId)}
-                      >
-                        Zmazať
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              );
-            })}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {expensesForYear.length === 0 && (
+              <tr>
+                <td style={cellStyle} colSpan={5} align="center">
+                  Žiadne náklady
+                </td>
+              </tr>
+            )}
+            {expensesForYear
+              .sort((a, b) => parseInt(a.month, 10) - parseInt(b.month, 10))
+              .map((exp) => {
+                const monthName =
+                  exp.month && safeMonthsSK[parseInt(exp.month, 10) - 1]
+                    ? safeMonthsSK[parseInt(exp.month, 10) - 1]
+                    : "";
+                return (
+                  <tr key={exp.expenseId}>
+                    <td style={cellStyle}>{monthName}</td>
+                    <td style={{ ...cellStyle, whiteSpace: "nowrap" }}>{exp.category}</td>
+                    <td style={cellStyle}>{exp.note || ""}</td>
+                    <td style={cellStyle}>
+                      {new Intl.NumberFormat("sk-SK", {
+                        style: "currency",
+                        currency: "EUR",
+                      }).format(parseFloat(exp.amount))}
+                    </td>
+                    <td style={cellStyle}>
+                      <div style={{ display: "flex", gap: "6px" }}>
+                        <button
+                          style={{
+                            padding: "4px 8px",
+                            borderRadius: "3px",
+                            border: "1px solid #007bff",
+                            background: "#007bff",
+                            color: "white",
+                            cursor: "pointer",
+                            fontSize: "0.9em",
+                          }}
+                          onClick={() => openEditModal(exp)}
+                        >
+                          Upraviť
+                        </button>
+                        <button
+                          style={{
+                            padding: "4px 8px",
+                            borderRadius: "3px",
+                            border: "1px solid #dc3545",
+                            background: "#dc3545",
+                            color: "white",
+                            cursor: "pointer",
+                            fontSize: "0.9em",
+                          }}
+                          onClick={() => deleteExpense(exp.expenseId)}
+                        >
+                          Zmazať
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+          </tbody>
+        </table>
+      )}
 
       {/* Modal pre nový náklad */}
       {showExpenseModal && (
@@ -470,6 +490,7 @@ Expenses.propTypes = {
   monthsSK: PropTypes.arrayOf(PropTypes.string),
   categories: PropTypes.arrayOf(PropTypes.string),
   onExpensesChanged: PropTypes.func,
+  loadingExpenses: PropTypes.bool,
 };
 
 Expenses.defaultProps = {
@@ -478,4 +499,5 @@ Expenses.defaultProps = {
   monthsSK: [],
   categories: [],
   onExpensesChanged: undefined,
+  loadingExpenses: false,
 };
