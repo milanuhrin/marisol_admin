@@ -1,15 +1,15 @@
 // AdminPanel.jsx
 import PropTypes from "prop-types";
 import { useState, useEffect, useCallback } from "react";
-import "./App.css"; // Import styles
+import "./App.css"; 
 import ReservationTable from "./ReservationTable";
 import Overview from "./Overview";
 import Expenses from "./Expenses";
 
-
 function AdminPanel({ signOut }) {
   const [reservations, setReservations] = useState([]);
   const [expenses, setExpenses] = useState([]);
+  const [loadingExpenses, setLoadingExpenses] = useState(true); // 👈 pridany stav
 
   const fetchReservations = async () => {
     try {
@@ -24,6 +24,7 @@ function AdminPanel({ signOut }) {
   };
 
   const fetchExpenses = async () => {
+    setLoadingExpenses(true); // 👈 nastavíme loading na true
     try {
       const response = await fetch("https://eb8ya8rtoc.execute-api.us-east-1.amazonaws.com/main/expenses");
       const data = await response.json();
@@ -32,6 +33,8 @@ function AdminPanel({ signOut }) {
       }
     } catch (error) {
       console.error("Failed to fetch expenses:", error);
+    } finally {
+      setLoadingExpenses(false); // 👈 nastavíme loading na false
     }
   };
 
@@ -51,7 +54,7 @@ function AdminPanel({ signOut }) {
           signOut();
           setTimeout(() => {
             window.location.href = "https://marisol.sk/";
-          }, 1000); // Small delay to ensure logout completes
+          }, 1000);
         }}
         style={{
           backgroundColor: "#e53935",
@@ -65,8 +68,8 @@ function AdminPanel({ signOut }) {
           marginBottom: "18px",
           transition: "background 0.2s"
         }}
-        onMouseOver={e => (e.currentTarget.style.backgroundColor = "#b71c1c")}
-        onMouseOut={e => (e.currentTarget.style.backgroundColor = "#e53935")}
+        onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#b71c1c")}
+        onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "#e53935")}
       >
         Logout
       </button>
@@ -74,7 +77,11 @@ function AdminPanel({ signOut }) {
       <h2>Administrácia</h2>
       <ReservationTable onDataChanged={fetchData} />
       <Overview reservations={reservations} expenses={expenses} />
-      <Expenses expenses={expenses} onExpensesChanged={fetchData} />
+      <Expenses 
+        expensesList={expenses} 
+        onExpensesChanged={fetchData} 
+        loadingExpenses={loadingExpenses}
+      />
     </div>
   );
 }

@@ -22,6 +22,7 @@ function Expenses({
     amount: "",
     note: "",
   });
+
   const [submittingExpense, setSubmittingExpense] = useState(false);
   const [expenseError, setExpenseError] = useState(null);
 
@@ -146,24 +147,19 @@ function Expenses({
     }
   };
 
+
+
   const safeExpensesList = Array.isArray(expensesList) ? expensesList : [];
   const safeMonthsSK = Array.isArray(monthsSK) ? monthsSK : [];
   const safeCategories = Array.isArray(categories) ? categories : [];
   const expensesForYear = safeExpensesList.filter((exp) => String(exp.year) === String(year));
 
-  // Local loading state for when waiting for expensesList to arrive
-  const [loadingState, setLoadingState] = useState(
-    loadingExpenses || (safeExpensesList.length === 0)
-  );
+  // Local loading state only depends on loadingExpenses
+  const [loadingState, setLoadingState] = useState(loadingExpenses);
 
   useEffect(() => {
-    // Set loading state if loadingExpenses is true or expensesList is empty
-    if (loadingExpenses || safeExpensesList.length === 0) {
-      setLoadingState(true);
-    } else {
-      setLoadingState(false);
-    }
-  }, [loadingExpenses, expensesList]);
+    setLoadingState(loadingExpenses);
+  }, [loadingExpenses]);
 
   console.log("📦 Expenses received:", expensesList, "for year:", year, "loading:", loadingExpenses);
 
@@ -189,7 +185,9 @@ function Expenses({
       </button>
 
       {loadingState ? (
-        <p>Načítavam náklady...</p>
+        <p>Načítavam náklady</p>
+      ) : expensesForYear.length === 0 ? (
+        <p>Žiadne náklady</p>
       ) : (
         <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "10px" }}>
           <thead>
@@ -202,13 +200,6 @@ function Expenses({
             </tr>
           </thead>
           <tbody>
-            {expensesForYear.length === 0 && (
-              <tr>
-                <td style={cellStyle} colSpan={5} align="center">
-                  Žiadne náklady
-                </td>
-              </tr>
-            )}
             {expensesForYear
               .sort((a, b) => parseInt(a.month, 10) - parseInt(b.month, 10))
               .map((exp) => {
