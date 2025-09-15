@@ -1,12 +1,12 @@
 // Overview.jsx
-import { useEffect, useState } from "react";
+import { useEffect, useState, forwardRef, useImperativeHandle, useCallback } from "react";
 import PropTypes from "prop-types";
 import Charts from "./Charts";
 
 const RESERVATIONS_API_URL = "https://eb8ya8rtoc.execute-api.us-east-1.amazonaws.com/main/reservation";
 const EXPENSES_API_URL = "https://eb8ya8rtoc.execute-api.us-east-1.amazonaws.com/main/expenses";
 
-function Overview({ onDataChanged }) {
+const Overview = forwardRef(function Overview({ onDataChanged }, ref) {
   const [yearlyTotals, setYearlyTotals] = useState({});
   const [loading, setLoading] = useState(true);
   const [showExpenseModal, setShowExpenseModal] = useState(false);
@@ -43,7 +43,7 @@ function Overview({ onDataChanged }) {
     "poistenie", "internet", "kamera", "web", "banka", "uctovnictvo", "dane", "Interier/opravy"
   ];
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     try {
       // Fetch reservations and expenses in parallel
@@ -114,20 +114,23 @@ function Overview({ onDataChanged }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useImperativeHandle(ref, () => ({
+    fetchData,
+  }), [fetchData]);
 
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
   useEffect(() => {
     // If onDataChanged changes (could be a counter or a ref), trigger refresh
     if (onDataChanged !== undefined) {
       fetchData();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [onDataChanged]);
+  }, [onDataChanged, fetchData]);
 
   const handleExpenseChange = (e) => {
     const { name, value } = e.target;
@@ -715,7 +718,7 @@ function Overview({ onDataChanged }) {
       )}
     </div>
   );
-}
+});
 
 const cellStyle = {
   padding: "10px",
