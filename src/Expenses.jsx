@@ -64,7 +64,7 @@ function Expenses({
         setShowExpenseModal(false);
         setExpenseForm({
           year: String(year),
-          month: "1",
+          month: String(currentMonth),
           category: "property mng",
           amount: "",
           note: "",
@@ -473,6 +473,7 @@ Expenses.propTypes = {
 };
 
 Expenses.defaultProps = {
+  year: new Date().getFullYear(),
   expensesList: [],
   monthsSK: [],
   categories: [],
