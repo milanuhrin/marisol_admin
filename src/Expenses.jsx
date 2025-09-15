@@ -154,8 +154,9 @@ function Expenses({
 
   return (
     <div>
-      <h3 style={{ marginTop: "30px" }}>Zoznam nákladov v roku {year}</h3>
-      <button
+      <h3 style={{ marginTop: "30px" }}>
+        Zoznam nákladov v roku {year || new Date().getFullYear()}
+      </h3>      <button
         style={{
           marginBottom: "20px",
           background: "#007bff",
