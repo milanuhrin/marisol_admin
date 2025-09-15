@@ -326,7 +326,7 @@ function formatCurrency(value) {
   return new Intl.NumberFormat("sk-SK", { style: "currency", currency: "EUR" }).format(value);
 }
 
-function ReservationTable() {
+function ReservationTable({ onDataChanged }) {
   const [reservations, setReservations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -378,6 +378,7 @@ function ReservationTable() {
         setReservations((prev) =>
           prev.filter((r) => r.reservationId !== reservationId)
         );
+        if (onDataChanged) onDataChanged();
         alert("Rezervácia bola úspešne vymazaná.");
         console.log("✅ Reservation deleted successfully.");
       } else {
@@ -480,6 +481,7 @@ function ReservationTable() {
                 }
                 if (result.success) {
                   fetchReservations();
+                  if (onDataChanged) onDataChanged();
                   form.reset();
                   setShowForm(false);
                   alert("Rezervácia bola pridaná.");
@@ -544,6 +546,7 @@ function ReservationTable() {
                 }
                 if (result.success) {
                   fetchReservations();
+                  if (onDataChanged) onDataChanged();
                   setShowEditForm(null);
                   alert("Rezervácia bola upravená.");
                 } else {
@@ -710,6 +713,10 @@ const closeButtonStyle = {
   fontSize: "24px",
   cursor: "pointer",
   lineHeight: "1",
+};
+
+ReservationTable.propTypes = {
+  onDataChanged: PropTypes.func,
 };
 
 export default ReservationTable;

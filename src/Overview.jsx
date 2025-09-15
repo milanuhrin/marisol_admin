@@ -1,11 +1,12 @@
 // Overview.jsx
 import { useEffect, useState } from "react";
+import PropTypes from "prop-types";
 import Charts from "./Charts";
 
 const RESERVATIONS_API_URL = "https://eb8ya8rtoc.execute-api.us-east-1.amazonaws.com/main/reservation";
 const EXPENSES_API_URL = "https://eb8ya8rtoc.execute-api.us-east-1.amazonaws.com/main/expenses";
 
-function Overview() {
+function Overview({ onDataChanged }) {
   const [yearlyTotals, setYearlyTotals] = useState({});
   const [loading, setLoading] = useState(true);
   const [showExpenseModal, setShowExpenseModal] = useState(false);
@@ -115,9 +116,18 @@ function Overview() {
     }
   };
 
+
   useEffect(() => {
     fetchData();
   }, []);
+
+  useEffect(() => {
+    // If onDataChanged changes (could be a counter or a ref), trigger refresh
+    if (onDataChanged !== undefined) {
+      fetchData();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [onDataChanged]);
 
   const handleExpenseChange = (e) => {
     const { name, value } = e.target;
@@ -711,6 +721,10 @@ const cellStyle = {
   padding: "10px",
   border: "1px solid #ccc",
   textAlign: "left",
+};
+
+Overview.propTypes = {
+  onDataChanged: PropTypes.any,
 };
 
 export default Overview;

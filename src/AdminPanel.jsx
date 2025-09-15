@@ -1,11 +1,14 @@
 // AdminPanel.jsx
 import PropTypes from "prop-types";
+import { useRef } from "react";
 import "./App.css"; // Import styles
 import ReservationTable from "./ReservationTable";
 import Overview from "./Overview";
 
 
 function AdminPanel({ signOut }) {
+  const overviewRef = useRef(null);
+
   return (
     <div style={{ textAlign: "center", marginTop: "10px" }}>
       <button
@@ -35,9 +38,9 @@ function AdminPanel({ signOut }) {
 
       <h2>Administrácia</h2>
 
-      <ReservationTable />
+      <ReservationTable onReservationChange={() => overviewRef.current?.fetchData()} />
 
-      <Overview />
+      <Overview ref={overviewRef} />
     </div>
   );
 }
