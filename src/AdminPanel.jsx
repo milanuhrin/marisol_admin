@@ -4,6 +4,7 @@ import { useRef } from "react";
 import "./App.css"; // Import styles
 import ReservationTable from "./ReservationTable";
 import Overview from "./Overview";
+import Expenses from "./Expenses";
 
 
 function AdminPanel({ signOut }) {
@@ -37,9 +38,9 @@ function AdminPanel({ signOut }) {
       </button>
 
       <h2>Administrácia</h2>
-
       <ReservationTable onDataChanged={() => overviewRef.current?.fetchData()} />
       <Overview ref={overviewRef} onExpensesChanged={() => overviewRef.current?.fetchData()} />
+      <Expenses onDataChanged={() => overviewRef.current?.fetchData()} />
     </div>
   );
 }

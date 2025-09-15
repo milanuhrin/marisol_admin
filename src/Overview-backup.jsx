@@ -1,10 +1,12 @@
 // Overview.jsx
-import { useEffect, useState } from "react";
+import { useEffect, useState, forwardRef, useImperativeHandle, useCallback } from "react";
+import PropTypes from "prop-types";
+import Charts from "./Charts";
 
 const RESERVATIONS_API_URL = "https://eb8ya8rtoc.execute-api.us-east-1.amazonaws.com/main/reservation";
 const EXPENSES_API_URL = "https://eb8ya8rtoc.execute-api.us-east-1.amazonaws.com/main/expenses";
 
-function Overview() {
+const Overview = forwardRef(function Overview({ onDataChanged, onExpensesChanged }, ref) {
   const [yearlyTotals, setYearlyTotals] = useState({});
   const [loading, setLoading] = useState(true);
   const [showExpenseModal, setShowExpenseModal] = useState(false);
@@ -13,6 +15,7 @@ function Overview() {
     month: "1",
     category: "property mng",
     amount: "",
+    note: "",
   });
   const [submittingExpense, setSubmittingExpense] = useState(false);
   const [expenseError, setExpenseError] = useState(null);
@@ -24,6 +27,7 @@ function Overview() {
     month: "",
     category: "",
     amount: "",
+    note: "",
   });
   const [editingExpenseId, setEditingExpenseId] = useState(null);
   const [submittingEdit, setSubmittingEdit] = useState(false);
@@ -39,7 +43,7 @@ function Overview() {
     "poistenie", "internet", "kamera", "web", "banka", "uctovnictvo", "dane", "Interier/opravy"
   ];
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     try {
       // Fetch reservations and expenses in parallel
@@ -110,12 +114,23 @@ function Overview() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useImperativeHandle(ref, () => ({
+    fetchData,
+  }), [fetchData]);
+
 
   useEffect(() => {
     fetchData();
-    // eslint-disable-next-line
-  }, []);
+  }, [fetchData]);
+
+  useEffect(() => {
+    // If onDataChanged changes (could be a counter or a ref), trigger refresh
+    if (onDataChanged !== undefined) {
+      fetchData();
+    }
+  }, [onDataChanged, fetchData]);
 
   const handleExpenseChange = (e) => {
     const { name, value } = e.target;
@@ -134,6 +149,7 @@ function Overview() {
       month: parseInt(expenseForm.month, 10),
       category: expenseForm.category,
       amount: parseFloat(expenseForm.amount),
+      note: expenseForm.note,
     };
     try {
       const resp = await fetch(EXPENSES_API_URL, {
@@ -151,8 +167,10 @@ function Overview() {
           month: "1",
           category: "property mng",
           amount: "",
+          note: "",
         });
         await fetchData();
+        onExpensesChanged?.();
       }
     } catch {
       setExpenseError("Chyba pri ukladaní.");
@@ -169,6 +187,7 @@ function Overview() {
       month: String(expense.month),
       category: expense.category,
       amount: String(expense.amount),
+      note: expense.note || "",
     });
     setEditingExpenseId(expense.expenseId);
     setEditError(null);
@@ -194,6 +213,7 @@ function Overview() {
       month: parseInt(editExpenseForm.month, 10),
       category: editExpenseForm.category,
       amount: parseFloat(editExpenseForm.amount),
+      note: editExpenseForm.note,
     };
     try {
       const resp = await fetch(`${EXPENSES_API_URL}/${editingExpenseId}`, {
@@ -211,9 +231,11 @@ function Overview() {
           month: "",
           category: "",
           amount: "",
+          note: "",
         });
         setEditingExpenseId(null);
         await fetchData();
+        onExpensesChanged?.();
       }
     } catch {
       setEditError("Chyba pri ukladaní.");
@@ -234,6 +256,7 @@ function Overview() {
         setExpensesList((prev) => prev.filter((exp) => exp.expenseId !== expenseId));
         // Refetch totals to update display
         await fetchData();
+        onExpensesChanged?.();
       } else {
         alert("Nepodarilo sa zmazať náklad.");
       }
@@ -249,21 +272,6 @@ function Overview() {
   return (
     <div style={{ marginTop: "30px" }}>
       <h3>Prehľad tržieb a nákladov podľa rokov</h3>
-      <button
-        style={{
-          marginBottom: "20px",
-          background: "#007bff",
-          color: "white",
-          border: "none",
-          padding: "10px 20px",
-          borderRadius: "4px",
-          cursor: "pointer",
-          fontWeight: "bold"
-        }}
-        onClick={() => setShowExpenseModal(true)}
-      >
-        Pridať nový náklad
-      </button>
 
       {showExpenseModal && (
         <div style={{
@@ -348,6 +356,18 @@ function Overview() {
               </div>
               <div style={{ marginBottom: "14px" }}>
                 <label>
+                  Poznámka:&nbsp;
+                  <input
+                    type="text"
+                    name="note"
+                    value={expenseForm.note}
+                    onChange={handleExpenseChange}
+                    style={{ padding: "6px", borderRadius: "3px", width: "200px" }}
+                  />
+                </label>
+              </div>
+              <div style={{ marginBottom: "14px" }}>
+                <label>
                   Suma (€):&nbsp;
                   <input
                     type="number"
@@ -401,6 +421,7 @@ function Overview() {
 
         // Filter expenses for this year
         const expensesForYear = expensesList.filter(exp => String(exp.year) === year);
+
 
         return (
           <div key={year} style={{ marginBottom: "40px" }}>
@@ -468,13 +489,40 @@ function Overview() {
               </tbody>
             </table>
 
-            <h5 style={{ marginTop: "30px" }}>Zoznam nákladov</h5>
+            {/* Graf tržby vs náklady vs zisk */}
+            <div style={{ marginTop: "18px" }}>
+              <Charts
+                year={year}
+                months={monthsSorted?.map(mk => ({
+                  key: mk,
+                  label: new Date(`${mk}-01`).toLocaleString("sk-SK", { month: "long" })
+                })) || []}
+                totals={months || {}}
+              />
+            </div>
+
+            <h3 style={{ marginTop: "30px" }}>Zoznam nákladov v roku {year}</h3>
+            <button
+              style={{
+                marginBottom: "20px",
+                background: "#007bff",
+                color: "white",
+                border: "none",
+                padding: "10px 20px",
+                borderRadius: "4px",
+                cursor: "pointer",
+                fontWeight: "bold"
+              }}
+              onClick={() => setShowExpenseModal(true)}
+            >
+              Pridať nový náklad
+            </button>
             <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "10px" }}>
               <thead>
                 <tr style={{ background: "#f0f0f0" }}>
-                  <th style={cellStyle}>Rok</th>
                   <th style={cellStyle}>Mesiac</th>
-                  <th style={cellStyle}>Kategória</th>
+                  <th style={{ ...cellStyle, whiteSpace: "nowrap" }}>Kategória</th>
+                  <th style={cellStyle}>Poznámka</th>
                   <th style={cellStyle}>Suma</th>
                   <th style={cellStyle}>Akcie</th>
                 </tr>
@@ -485,53 +533,56 @@ function Overview() {
                     <td style={cellStyle} colSpan={5} align="center">Žiadne náklady</td>
                   </tr>
                 )}
-                {expensesForYear.map((exp) => {
-                  const monthName = exp.month ? monthsSK[parseInt(exp.month, 10) - 1] || "" : "";
-                  return (
-                    <tr key={exp.expenseId}>
-                      <td style={cellStyle}>{exp.year}</td>
-                      <td style={cellStyle}>{monthName}</td>
-                      <td style={cellStyle}>{exp.category}</td>
-                      <td style={cellStyle}>
-                        {new Intl.NumberFormat("sk-SK", {
-                          style: "currency",
-                          currency: "EUR",
-                        }).format(parseFloat(exp.amount))}
-                      </td>
-                      <td style={cellStyle}>
-                        <button
-                          style={{
-                            marginRight: "8px",
-                            padding: "4px 8px",
-                            borderRadius: "3px",
-                            border: "1px solid #007bff",
-                            background: "#007bff",
-                            color: "white",
-                            cursor: "pointer",
-                            fontSize: "0.9em"
-                          }}
-                          onClick={() => openEditModal(exp)}
-                        >
-                          Upraviť
-                        </button>
-                        <button
-                          style={{
-                            padding: "4px 8px",
-                            borderRadius: "3px",
-                            border: "1px solid #dc3545",
-                            background: "#dc3545",
-                            color: "white",
-                            cursor: "pointer",
-                            fontSize: "0.9em"
-                          }}
-                          onClick={() => deleteExpense(exp.expenseId)}
-                        >
-                          Zmazať
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
+                {expensesForYear
+                  .sort((a, b) => parseInt(a.month, 10) - parseInt(b.month, 10))
+                  .map((exp) => {
+                    const monthName = exp.month ? monthsSK[parseInt(exp.month, 10) - 1] || "" : "";
+                    return (
+                      <tr key={exp.expenseId}>
+                        <td style={cellStyle}>{monthName}</td>
+                        <td style={{ ...cellStyle, whiteSpace: "nowrap" }}>{exp.category}</td>
+                        <td style={cellStyle}>{exp.note || ""}</td>
+                        <td style={cellStyle}>
+                          {new Intl.NumberFormat("sk-SK", {
+                            style: "currency",
+                            currency: "EUR",
+                          }).format(parseFloat(exp.amount))}
+                        </td>
+                        <td style={cellStyle}>
+                          <div style={{ display: "flex", gap: "6px" }}>
+                            <button
+                              style={{
+                                padding: "4px 8px",
+                                borderRadius: "3px",
+                                border: "1px solid #007bff",
+                                background: "#007bff",
+                                color: "white",
+                                cursor: "pointer",
+                                fontSize: "0.9em"
+                              }}
+                              onClick={() => openEditModal(exp)}
+                            >
+                              Upraviť
+                            </button>
+                            <button
+                              style={{
+                                padding: "4px 8px",
+                                borderRadius: "3px",
+                                border: "1px solid #dc3545",
+                                background: "#dc3545",
+                                color: "white",
+                                cursor: "pointer",
+                                fontSize: "0.9em"
+                              }}
+                              onClick={() => deleteExpense(exp.expenseId)}
+                            >
+                              Zmazať
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
               </tbody>
             </table>
           </div>
@@ -621,6 +672,18 @@ function Overview() {
               </div>
               <div style={{ marginBottom: "14px" }}>
                 <label>
+                  Poznámka:&nbsp;
+                  <input
+                    type="text"
+                    name="note"
+                    value={editExpenseForm.note}
+                    onChange={handleEditChange}
+                    style={{ padding: "6px", borderRadius: "3px", width: "200px" }}
+                  />
+                </label>
+              </div>
+              <div style={{ marginBottom: "14px" }}>
+                <label>
                   Suma (€):&nbsp;
                   <input
                     type="number"
@@ -658,7 +721,7 @@ function Overview() {
       )}
     </div>
   );
-}
+});
 
 const cellStyle = {
   padding: "10px",
@@ -666,4 +729,10 @@ const cellStyle = {
   textAlign: "left",
 };
 
+
 export default Overview;
+
+Overview.propTypes = {
+  onDataChanged: PropTypes.func,
+  onExpensesChanged: PropTypes.func,
+};
