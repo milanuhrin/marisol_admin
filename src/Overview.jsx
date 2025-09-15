@@ -1,98 +1,67 @@
 // Overview.jsx
-import { useEffect, useState, forwardRef, useImperativeHandle, useCallback } from "react";
+import { useState, useEffect } from "react";
+import PropTypes from "prop-types";
 import Charts from "./Charts";
 
-const RESERVATIONS_API_URL = "https://eb8ya8rtoc.execute-api.us-east-1.amazonaws.com/main/reservation";
-const EXPENSES_API_URL = "https://eb8ya8rtoc.execute-api.us-east-1.amazonaws.com/main/expenses";
-
-const Overview = forwardRef(function Overview(props, ref) {
+const Overview = function Overview({ reservations, expenses }) {
   const [yearlyTotals, setYearlyTotals] = useState({});
-  const [loading, setLoading] = useState(true);
-  // No longer needed: expense form/modal/edit state
-
-
-  const fetchData = useCallback(async () => {
-    setLoading(true);
-    try {
-      // Fetch reservations and expenses in parallel
-      const [resRes, resExp] = await Promise.all([
-        fetch(RESERVATIONS_API_URL),
-        fetch(EXPENSES_API_URL),
-      ]);
-      const dataRes = await resRes.json();
-      const dataExp = await resExp.json();
-
-      // Build revenuesByYearMonth
-      const revenuesByYearMonth = {};
-      if (dataRes.success && Array.isArray(dataRes.reservations)) {
-        dataRes.reservations.forEach((res) => {
-          // záloha
-          if (res.advanceDate && res.advance) {
-            const [year, month] = res.advanceDate.split("-");
-            const key = `${year}-${month}`;
-            revenuesByYearMonth[year] = revenuesByYearMonth[year] || {};
-            revenuesByYearMonth[year][key] = (revenuesByYearMonth[year][key] || 0) + parseFloat(res.advance);
-          }
-          // doplatok
-          if (res.remainingDate && res.remaining) {
-            const [year, month] = res.remainingDate.split("-");
-            const key = `${year}-${month}`;
-            revenuesByYearMonth[year] = revenuesByYearMonth[year] || {};
-            revenuesByYearMonth[year][key] = (revenuesByYearMonth[year][key] || 0) + parseFloat(res.remaining);
-          }
-        });
-      }
-
-      // Build expensesByYearMonth
-      const expensesByYearMonth = {};
-      if (dataExp.success && Array.isArray(dataExp.expenses)) {
-        dataExp.expenses.forEach((exp) => {
-          if (exp.year && exp.month && exp.amount) {
-            const year = String(exp.year);
-            const month = String(exp.month).padStart(2, "0");
-            const key = `${year}-${month}`;
-            expensesByYearMonth[year] = expensesByYearMonth[year] || {};
-            expensesByYearMonth[year][key] = (expensesByYearMonth[year][key] || 0) + parseFloat(exp.amount);
-          }
-        });
-      }
-
-      // Combine into yearlyTotals
-      const allYears = new Set([...Object.keys(revenuesByYearMonth), ...Object.keys(expensesByYearMonth)]);
-      const combinedTotals = {};
-      allYears.forEach((year) => {
-        const monthsSet = new Set([
-          ...(revenuesByYearMonth[year] ? Object.keys(revenuesByYearMonth[year]) : []),
-          ...(expensesByYearMonth[year] ? Object.keys(expensesByYearMonth[year]) : []),
-        ]);
-        combinedTotals[year] = {};
-        monthsSet.forEach((monthKey) => {
-          const revenues = revenuesByYearMonth[year]?.[monthKey] || 0;
-          const expenses = expensesByYearMonth[year]?.[monthKey] || 0;
-          combinedTotals[year][monthKey] = { revenues, expenses };
-        });
-      });
-
-      setYearlyTotals(combinedTotals);
-    } catch (err) {
-      console.error("❌ Error fetching data for overview:", err);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useImperativeHandle(ref, () => ({
-    fetchData,
-  }), [fetchData]);
-
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    // Build revenuesByYearMonth
+    const revenuesByYearMonth = {};
+    if (Array.isArray(reservations)) {
+      reservations.forEach((res) => {
+        // záloha
+        if (res.advanceDate && res.advance) {
+          const [year, month] = res.advanceDate.split("-");
+          const key = `${year}-${month}`;
+          revenuesByYearMonth[year] = revenuesByYearMonth[year] || {};
+          revenuesByYearMonth[year][key] = (revenuesByYearMonth[year][key] || 0) + parseFloat(res.advance);
+        }
+        // doplatok
+        if (res.remainingDate && res.remaining) {
+          const [year, month] = res.remainingDate.split("-");
+          const key = `${year}-${month}`;
+          revenuesByYearMonth[year] = revenuesByYearMonth[year] || {};
+          revenuesByYearMonth[year][key] = (revenuesByYearMonth[year][key] || 0) + parseFloat(res.remaining);
+        }
+      });
+    }
 
-  // Expense form and editing logic removed
+    // Build expensesByYearMonth
+    const expensesByYearMonth = {};
+    if (Array.isArray(expenses)) {
+      expenses.forEach((exp) => {
+        if (exp.year && exp.month && exp.amount) {
+          const year = String(exp.year);
+          const month = String(exp.month).padStart(2, "0");
+          const key = `${year}-${month}`;
+          expensesByYearMonth[year] = expensesByYearMonth[year] || {};
+          expensesByYearMonth[year][key] = (expensesByYearMonth[year][key] || 0) + parseFloat(exp.amount);
+        }
+      });
+    }
 
-  if (loading) return <p>Načítavam prehľad</p>;
+    // Combine into yearlyTotals
+    const allYears = new Set([...Object.keys(revenuesByYearMonth), ...Object.keys(expensesByYearMonth)]);
+    const combinedTotals = {};
+    allYears.forEach((year) => {
+      const monthsSet = new Set([
+        ...(revenuesByYearMonth[year] ? Object.keys(revenuesByYearMonth[year]) : []),
+        ...(expensesByYearMonth[year] ? Object.keys(expensesByYearMonth[year]) : []),
+      ]);
+      combinedTotals[year] = {};
+      monthsSet.forEach((monthKey) => {
+        const revenues = revenuesByYearMonth[year]?.[monthKey] || 0;
+        const expensesVal = expensesByYearMonth[year]?.[monthKey] || 0;
+        combinedTotals[year][monthKey] = { revenues, expenses: expensesVal };
+      });
+    });
+
+    setYearlyTotals(combinedTotals);
+  }, [reservations, expenses]);
+
+  if (!reservations || !expenses) return <p>Načítavam prehľad</p>;
 
   const yearsSorted = Object.keys(yearlyTotals).sort((a, b) => b.localeCompare(a)); // zostupne podľa roku
 
@@ -196,7 +165,7 @@ const Overview = forwardRef(function Overview(props, ref) {
       })}
     </div>
   );
-});
+};
 
 const cellStyle = {
   padding: "10px",
@@ -204,5 +173,22 @@ const cellStyle = {
   textAlign: "left",
 };
 
+Overview.propTypes = {
+  reservations: PropTypes.arrayOf(
+    PropTypes.shape({
+      advanceDate: PropTypes.string,
+      advance: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+      remainingDate: PropTypes.string,
+      remaining: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    })
+  ).isRequired,
+  expenses: PropTypes.arrayOf(
+    PropTypes.shape({
+      year: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+      month: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+      amount: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    })
+  ).isRequired,
+};
 
 export default Overview;

@@ -6,12 +6,18 @@ const currentMonth = new Date().getMonth() + 1; // 1-12
 
 const EXPENSES_API_URL = "https://eb8ya8rtoc.execute-api.us-east-1.amazonaws.com/main/expenses";
 
-function Expenses({ year, expensesList, monthsSK, categories, onExpensesChanged }) {
+function Expenses({
+  year,
+  expensesList = [],
+  monthsSK = [],
+  categories = [],
+  onExpensesChanged,
+}) {
   const [showExpenseModal, setShowExpenseModal] = useState(false);
   const [expenseForm, setExpenseForm] = useState({
     year: String(year),
     month: String(currentMonth),
-    category: "property mng",
+    category: categories && categories.length > 0 ? categories[0] : "property mng",
     amount: "",
     note: "",
   });
@@ -139,7 +145,12 @@ function Expenses({ year, expensesList, monthsSK, categories, onExpensesChanged 
     }
   };
 
-  const expensesForYear = (expensesList || []).filter((exp) => String(exp.year) === String(year));
+  const safeExpensesList = Array.isArray(expensesList) ? expensesList : [];
+  const safeMonthsSK = Array.isArray(monthsSK) ? monthsSK : [];
+  const safeCategories = Array.isArray(categories) ? categories : [];
+  const expensesForYear = safeExpensesList.filter((exp) => String(exp.year) === String(year));
+
+  console.log("📦 Expenses received:", expensesList, "for year:", year);
 
   return (
     <div>
@@ -181,7 +192,10 @@ function Expenses({ year, expensesList, monthsSK, categories, onExpensesChanged 
           {expensesForYear
             .sort((a, b) => parseInt(a.month, 10) - parseInt(b.month, 10))
             .map((exp) => {
-              const monthName = exp.month ? monthsSK[parseInt(exp.month, 10) - 1] || "" : "";
+              const monthName =
+                exp.month && safeMonthsSK[parseInt(exp.month, 10) - 1]
+                  ? safeMonthsSK[parseInt(exp.month, 10) - 1]
+                  : "";
               return (
                 <tr key={exp.expenseId}>
                   <td style={cellStyle}>{monthName}</td>
@@ -255,8 +269,8 @@ function Expenses({ year, expensesList, monthsSK, categories, onExpensesChanged 
               <div style={{ marginBottom: "14px" }}>
                 <label>
                   Mesiac:&nbsp;
-                  <select name="month" value={expenseForm.month} onChange={handleExpenseChange}>
-                    {monthsSK.map((m, i) => (
+                  <select name="month" value={expenseForm.month || ""} onChange={handleExpenseChange}>
+                    {safeMonthsSK.map((m, i) => (
                       <option key={i + 1} value={String(i + 1)}>
                         {m}
                       </option>
@@ -269,10 +283,10 @@ function Expenses({ year, expensesList, monthsSK, categories, onExpensesChanged 
                   Kategória:&nbsp;
                   <select
                     name="category"
-                    value={expenseForm.category}
+                    value={expenseForm.category || ""}
                     onChange={handleExpenseChange}
                   >
-                    {categories.map((cat) => (
+                    {safeCategories.map((cat) => (
                       <option key={cat} value={cat}>
                         {cat}
                       </option>
@@ -286,7 +300,7 @@ function Expenses({ year, expensesList, monthsSK, categories, onExpensesChanged 
                   <input
                     type="text"
                     name="note"
-                    value={expenseForm.note}
+                    value={expenseForm.note || ""}
                     onChange={handleExpenseChange}
                   />
                 </label>
@@ -297,7 +311,7 @@ function Expenses({ year, expensesList, monthsSK, categories, onExpensesChanged 
                   <input
                     type="number"
                     name="amount"
-                    value={expenseForm.amount}
+                    value={expenseForm.amount || ""}
                     min="0"
                     step="0.01"
                     onChange={handleExpenseChange}
@@ -344,10 +358,10 @@ function Expenses({ year, expensesList, monthsSK, categories, onExpensesChanged 
                   Mesiac:&nbsp;
                   <select
                     name="month"
-                    value={editExpenseForm.month}
+                    value={editExpenseForm.month || ""}
                     onChange={handleEditChange}
                   >
-                    {monthsSK.map((m, i) => (
+                    {safeMonthsSK.map((m, i) => (
                       <option key={i + 1} value={String(i + 1)}>
                         {m}
                       </option>
@@ -360,10 +374,10 @@ function Expenses({ year, expensesList, monthsSK, categories, onExpensesChanged 
                   Kategória:&nbsp;
                   <select
                     name="category"
-                    value={editExpenseForm.category}
+                    value={editExpenseForm.category || ""}
                     onChange={handleEditChange}
                   >
-                    {categories.map((cat) => (
+                    {safeCategories.map((cat) => (
                       <option key={cat} value={cat}>
                         {cat}
                       </option>
@@ -377,7 +391,7 @@ function Expenses({ year, expensesList, monthsSK, categories, onExpensesChanged 
                   <input
                     type="text"
                     name="note"
-                    value={editExpenseForm.note}
+                    value={editExpenseForm.note || ""}
                     onChange={handleEditChange}
                   />
                 </label>
@@ -388,7 +402,7 @@ function Expenses({ year, expensesList, monthsSK, categories, onExpensesChanged 
                   <input
                     type="number"
                     name="amount"
-                    value={editExpenseForm.amount}
+                    value={editExpenseForm.amount || ""}
                     min="0"
                     step="0.01"
                     onChange={handleEditChange}
@@ -451,8 +465,15 @@ export default Expenses;
 
 Expenses.propTypes = {
   year: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-  expensesList: PropTypes.arrayOf(PropTypes.object).isRequired,
-  monthsSK: PropTypes.arrayOf(PropTypes.string).isRequired,
-  categories: PropTypes.arrayOf(PropTypes.string).isRequired,
+  expensesList: PropTypes.arrayOf(PropTypes.object),
+  monthsSK: PropTypes.arrayOf(PropTypes.string),
+  categories: PropTypes.arrayOf(PropTypes.string),
   onExpensesChanged: PropTypes.func,
+};
+
+Expenses.defaultProps = {
+  expensesList: [],
+  monthsSK: [],
+  categories: [],
+  onExpensesChanged: undefined,
 };
