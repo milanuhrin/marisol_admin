@@ -14,6 +14,7 @@ function Overview() {
     month: "1",
     category: "property mng",
     amount: "",
+    note: "",
   });
   const [submittingExpense, setSubmittingExpense] = useState(false);
   const [expenseError, setExpenseError] = useState(null);
@@ -25,6 +26,7 @@ function Overview() {
     month: "",
     category: "",
     amount: "",
+    note: "",
   });
   const [editingExpenseId, setEditingExpenseId] = useState(null);
   const [submittingEdit, setSubmittingEdit] = useState(false);
@@ -134,6 +136,7 @@ function Overview() {
       month: parseInt(expenseForm.month, 10),
       category: expenseForm.category,
       amount: parseFloat(expenseForm.amount),
+      note: expenseForm.note,
     };
     try {
       const resp = await fetch(EXPENSES_API_URL, {
@@ -151,6 +154,7 @@ function Overview() {
           month: "1",
           category: "property mng",
           amount: "",
+          note: "",
         });
         await fetchData();
       }
@@ -169,6 +173,7 @@ function Overview() {
       month: String(expense.month),
       category: expense.category,
       amount: String(expense.amount),
+      note: expense.note || "",
     });
     setEditingExpenseId(expense.expenseId);
     setEditError(null);
@@ -194,6 +199,7 @@ function Overview() {
       month: parseInt(editExpenseForm.month, 10),
       category: editExpenseForm.category,
       amount: parseFloat(editExpenseForm.amount),
+      note: editExpenseForm.note,
     };
     try {
       const resp = await fetch(`${EXPENSES_API_URL}/${editingExpenseId}`, {
@@ -211,6 +217,7 @@ function Overview() {
           month: "",
           category: "",
           amount: "",
+          note: "",
         });
         setEditingExpenseId(null);
         await fetchData();
@@ -329,6 +336,18 @@ function Overview() {
                       <option key={cat} value={cat}>{cat}</option>
                     ))}
                   </select>
+                </label>
+              </div>
+              <div style={{ marginBottom: "14px" }}>
+                <label>
+                  Poznámka:&nbsp;
+                  <input
+                    type="text"
+                    name="note"
+                    value={expenseForm.note}
+                    onChange={handleExpenseChange}
+                    style={{ padding: "6px", borderRadius: "3px", width: "200px" }}
+                  />
                 </label>
               </div>
               <div style={{ marginBottom: "14px" }}>
@@ -486,7 +505,8 @@ function Overview() {
               <thead>
                 <tr style={{ background: "#f0f0f0" }}>
                   <th style={cellStyle}>Mesiac</th>
-                  <th style={cellStyle}>Kategória</th>
+                  <th style={{ ...cellStyle, whiteSpace: "nowrap" }}>Kategória</th>
+                  <th style={cellStyle}>Poznámka</th>
                   <th style={cellStyle}>Suma</th>
                   <th style={cellStyle}>Akcie</th>
                 </tr>
@@ -494,7 +514,7 @@ function Overview() {
               <tbody>
                 {expensesForYear.length === 0 && (
                   <tr>
-                    <td style={cellStyle} colSpan={4} align="center">Žiadne náklady</td>
+                    <td style={cellStyle} colSpan={5} align="center">Žiadne náklady</td>
                   </tr>
                 )}
                 {expensesForYear
@@ -504,7 +524,8 @@ function Overview() {
                     return (
                       <tr key={exp.expenseId}>
                         <td style={cellStyle}>{monthName}</td>
-                        <td style={cellStyle}>{exp.category}</td>
+                        <td style={{ ...cellStyle, whiteSpace: "nowrap" }}>{exp.category}</td>
+                        <td style={cellStyle}>{exp.note || ""}</td>
                         <td style={cellStyle}>
                           {new Intl.NumberFormat("sk-SK", {
                             style: "currency",
@@ -512,35 +533,36 @@ function Overview() {
                           }).format(parseFloat(exp.amount))}
                         </td>
                         <td style={cellStyle}>
-                          <button
-                            style={{
-                              marginRight: "8px",
-                              padding: "4px 8px",
-                              borderRadius: "3px",
-                              border: "1px solid #007bff",
-                              background: "#007bff",
-                              color: "white",
-                              cursor: "pointer",
-                              fontSize: "0.9em"
-                            }}
-                            onClick={() => openEditModal(exp)}
-                          >
-                            Upraviť
-                          </button>
-                          <button
-                            style={{
-                              padding: "4px 8px",
-                              borderRadius: "3px",
-                              border: "1px solid #dc3545",
-                              background: "#dc3545",
-                              color: "white",
-                              cursor: "pointer",
-                              fontSize: "0.9em"
-                            }}
-                            onClick={() => deleteExpense(exp.expenseId)}
-                          >
-                            Zmazať
-                          </button>
+                          <div style={{ display: "flex", gap: "6px" }}>
+                            <button
+                              style={{
+                                padding: "4px 8px",
+                                borderRadius: "3px",
+                                border: "1px solid #007bff",
+                                background: "#007bff",
+                                color: "white",
+                                cursor: "pointer",
+                                fontSize: "0.9em"
+                              }}
+                              onClick={() => openEditModal(exp)}
+                            >
+                              Upraviť
+                            </button>
+                            <button
+                              style={{
+                                padding: "4px 8px",
+                                borderRadius: "3px",
+                                border: "1px solid #dc3545",
+                                background: "#dc3545",
+                                color: "white",
+                                cursor: "pointer",
+                                fontSize: "0.9em"
+                              }}
+                              onClick={() => deleteExpense(exp.expenseId)}
+                            >
+                              Zmazať
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     );
@@ -630,6 +652,18 @@ function Overview() {
                       <option key={cat} value={cat}>{cat}</option>
                     ))}
                   </select>
+                </label>
+              </div>
+              <div style={{ marginBottom: "14px" }}>
+                <label>
+                  Poznámka:&nbsp;
+                  <input
+                    type="text"
+                    name="note"
+                    value={editExpenseForm.note}
+                    onChange={handleEditChange}
+                    style={{ padding: "6px", borderRadius: "3px", width: "200px" }}
+                  />
                 </label>
               </div>
               <div style={{ marginBottom: "14px" }}>
