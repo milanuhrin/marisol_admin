@@ -155,7 +155,7 @@ function Expenses({ year, expensesList, monthsSK, categories, onExpensesChanged 
         }}
         onClick={() => setShowExpenseModal(true)}
       >
-        Pridať nový náklad
+        Nový výdavok
       </button>
 
       <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "10px" }}>

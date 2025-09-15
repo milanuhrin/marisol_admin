@@ -39,8 +39,8 @@ function AdminPanel({ signOut }) {
 
       <h2>Administrácia</h2>
       <ReservationTable onDataChanged={() => overviewRef.current?.fetchData()} />
-      <Overview ref={overviewRef} onExpensesChanged={() => overviewRef.current?.fetchData()} />
-      <Expenses onDataChanged={() => overviewRef.current?.fetchData()} />
+      <Overview ref={overviewRef} />
+      <Expenses onExpensesChanged={() => overviewRef.current?.fetchData()} />
     </div>
   );
 }

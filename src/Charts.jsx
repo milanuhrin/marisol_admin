@@ -185,9 +185,9 @@ const Charts = ({ year, months, totals }) => {
 
   return (
     <div>
-      <h3>Tržby, Náklady & Zisk - {year}</h3>
+      <h3>Tržby, Náklady a Zisk - {year}</h3>
       <Line data={chartData} options={chartOptions} />
-      <h3 style={{ marginTop: "20px" }}>Kumulatívne Tržby, Náklady & Zisk - {year}</h3>
+      <h3 style={{ marginTop: "20px" }}>Kumulatívne Tržby, Náklady a Zisk - {year}</h3>
       <Line data={chartDataCumulative} options={chartOptionsCumulative} />
     </div>
   );
