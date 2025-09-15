@@ -109,10 +109,10 @@ function Expenses({
   const openEditModal = (expense) => {
     setEditExpenseModal(true);
     setEditExpenseForm({
-      year: String(expense.year),
-      month: String(expense.month),
-      category: expense.category,
-      amount: String(expense.amount),
+      year: String(expense.year || new Date().getFullYear()),
+      month: String(expense.month || new Date().getMonth() + 1),
+      category: expense.category || categories[0],
+      amount: expense.amount !== undefined ? String(expense.amount) : "",
       note: expense.note || "",
     });
     setEditingExpenseId(expense.expenseId);
@@ -378,11 +378,13 @@ function Expenses({
                     value={editExpenseForm.year}
                     onChange={handleEditChange}
                   >
-                    {Array.from({ length: 6 }, (_, i) => 2025 + i).map((y) => (
-                      <option key={y} value={y}>
-                        {y}
-                      </option>
-                    ))}
+                    {[editExpenseForm.year, ...Array.from({ length: 6 }, (_, i) => new Date().getFullYear() + i)]
+                      .filter((v, i, arr) => arr.indexOf(v) === i)
+                      .map((y) => (
+                        <option key={y} value={y}>
+                          {y}
+                        </option>
+                      ))}
                   </select>
                 </label>
               </div>
