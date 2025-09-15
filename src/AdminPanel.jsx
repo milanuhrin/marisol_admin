@@ -1,6 +1,6 @@
 // AdminPanel.jsx
 import PropTypes from "prop-types";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import "./App.css"; // Import styles
 import ReservationTable from "./ReservationTable";
 import Overview from "./Overview";
@@ -35,14 +35,14 @@ function AdminPanel({ signOut }) {
     }
   };
 
-  const fetchData = () => {
+  const fetchData = useCallback(() => {
     fetchReservations();
     fetchExpenses();
-  };
+  }, []);
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
   return (
     <div style={{ textAlign: "center", marginTop: "10px" }}>
