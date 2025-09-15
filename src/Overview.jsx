@@ -5,7 +5,7 @@ import Charts from "./Charts";
 const RESERVATIONS_API_URL = "https://eb8ya8rtoc.execute-api.us-east-1.amazonaws.com/main/reservation";
 const EXPENSES_API_URL = "https://eb8ya8rtoc.execute-api.us-east-1.amazonaws.com/main/expenses";
 
-const Overview = forwardRef(function Overview(_, ref) {
+const Overview = forwardRef(function Overview(props, ref) {
   const [yearlyTotals, setYearlyTotals] = useState({});
   const [loading, setLoading] = useState(true);
   // No longer needed: expense form/modal/edit state
