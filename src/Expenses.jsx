@@ -139,7 +139,7 @@ function Expenses({ year, expensesList, monthsSK, categories, onExpensesChanged 
     }
   };
 
-  const expensesForYear = expensesList.filter((exp) => String(exp.year) === String(year));
+  const expensesForYear = (expensesList || []).filter((exp) => String(exp.year) === String(year));
 
   return (
     <div>
