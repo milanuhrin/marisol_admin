@@ -7,7 +7,6 @@ import {
   PointElement,
   Legend,
   Tooltip,
-  Title,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 
@@ -18,8 +17,7 @@ ChartJS.register(
   PointElement,
   LineElement,
   Legend,
-  Tooltip,
-  Title
+  Tooltip
 );
 
 /**
@@ -86,15 +84,70 @@ const Charts = ({ year, months, totals }) => {
     ],
   };
 
+  // Compute cumulative data
+  const cumulativeRevenues = [];
+  const cumulativeExpenses = [];
+  const cumulativeProfit = [];
+  revenues.reduce((acc, val) => {
+    const cumRev = acc + val;
+    cumulativeRevenues.push(cumRev);
+    return cumRev;
+  }, 0);
+  expenses.reduce((acc, val) => {
+    const cumExp = acc + val;
+    cumulativeExpenses.push(cumExp);
+    return cumExp;
+  }, 0);
+  profit.reduce((acc, val) => {
+    const cumProf = acc + val;
+    cumulativeProfit.push(cumProf);
+    return cumProf;
+  }, 0);
+
+  const chartDataCumulative = {
+    labels,
+    datasets: [
+      {
+        label: 'Tržby',
+        data: cumulativeRevenues,
+        borderColor: 'rgba(54, 162, 235, 1)',
+        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+        fill: false,
+        tension: 0.3,
+        pointBackgroundColor: 'rgba(54, 162, 235, 1)',
+        pointBorderColor: 'rgba(54, 162, 235, 1)',
+        pointStyle: 'circle',
+      },
+      {
+        label: 'Náklady',
+        data: cumulativeExpenses,
+        borderColor: 'rgba(255, 99, 132, 1)',
+        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+        fill: false,
+        tension: 0.3,
+        pointBackgroundColor: 'rgba(255, 99, 132, 1)',
+        pointBorderColor: 'rgba(255, 99, 132, 1)',
+        pointStyle: 'rect',
+      },
+      {
+        label: 'Zisk',
+        data: cumulativeProfit,
+        borderColor: 'rgba(75, 192, 75, 1)',
+        backgroundColor: 'rgba(75, 192, 75, 0.2)',
+        fill: false,
+        tension: 0.3,
+        pointBackgroundColor: 'rgba(75, 192, 75, 1)',
+        pointBorderColor: 'rgba(75, 192, 75, 1)',
+        pointStyle: 'triangle',
+      },
+    ],
+  };
+
   const chartOptions = {
     responsive: true,
     plugins: {
       legend: {
         position: 'top',
-      },
-      title: {
-        display: true,
-        text: `Tržby, Náklady & Zisk - ${year}`,
       },
       tooltip: {
         mode: 'index',
@@ -123,9 +176,19 @@ const Charts = ({ year, months, totals }) => {
     },
   };
 
+  const chartOptionsCumulative = {
+    ...chartOptions,
+    plugins: {
+      ...chartOptions.plugins,
+    },
+  };
+
   return (
     <div>
+      <h3>Tržby, Náklady & Zisk - {year}</h3>
       <Line data={chartData} options={chartOptions} />
+      <h3 style={{ marginTop: "20px" }}>Kumulatívne Tržby, Náklady & Zisk - {year}</h3>
+      <Line data={chartDataCumulative} options={chartOptionsCumulative} />
     </div>
   );
 };
