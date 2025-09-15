@@ -2,6 +2,32 @@
 import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 
+// Slovak months and categories for expenses
+const monthsSK = [
+  "Január",
+  "Február",
+  "Marec",
+  "Apríl",
+  "Máj",
+  "Jún",
+  "Júl",
+  "August",
+  "September",
+  "Október",
+  "November",
+  "December",
+];
+
+const categories = [
+  "property mng",
+  "oprava",
+  "energie",
+  "služby",
+  "daň",
+  "poistenie",
+  "iné",
+];
+
 const currentMonth = new Date().getMonth() + 1; // 1-12
 
 const EXPENSES_API_URL = "https://eb8ya8rtoc.execute-api.us-east-1.amazonaws.com/main/expenses";
@@ -9,8 +35,6 @@ const EXPENSES_API_URL = "https://eb8ya8rtoc.execute-api.us-east-1.amazonaws.com
 function Expenses({
   year,
   expensesList = [],
-  monthsSK = [],
-  categories = [],
   onExpensesChanged,
   loadingExpenses = false,
 }) {
@@ -18,7 +42,7 @@ function Expenses({
   const [expenseForm, setExpenseForm] = useState({
     year: String(year),
     month: String(currentMonth),
-    category: categories && categories.length > 0 ? categories[0] : "property mng",
+    category: categories[0],
     amount: "",
     note: "",
   });
@@ -150,8 +174,6 @@ function Expenses({
 
 
   const safeExpensesList = Array.isArray(expensesList) ? expensesList : [];
-  const safeMonthsSK = Array.isArray(monthsSK) ? monthsSK : [];
-  const safeCategories = Array.isArray(categories) ? categories : [];
   const expensesForYear = safeExpensesList.filter((exp) => String(exp.year) === String(year));
 
   // Local loading state only depends on loadingExpenses
@@ -204,8 +226,8 @@ function Expenses({
               .sort((a, b) => parseInt(a.month, 10) - parseInt(b.month, 10))
               .map((exp) => {
                 const monthName =
-                  exp.month && safeMonthsSK[parseInt(exp.month, 10) - 1]
-                    ? safeMonthsSK[parseInt(exp.month, 10) - 1]
+                  exp.month && monthsSK[parseInt(exp.month, 10) - 1]
+                    ? monthsSK[parseInt(exp.month, 10) - 1]
                     : "";
                 return (
                   <tr key={exp.expenseId}>
@@ -282,7 +304,7 @@ function Expenses({
                 <label>
                   Mesiac:&nbsp;
                   <select name="month" value={expenseForm.month || ""} onChange={handleExpenseChange}>
-                    {safeMonthsSK.map((m, i) => (
+                    {monthsSK.map((m, i) => (
                       <option key={i + 1} value={String(i + 1)}>
                         {m}
                       </option>
@@ -298,7 +320,7 @@ function Expenses({
                     value={expenseForm.category || ""}
                     onChange={handleExpenseChange}
                   >
-                    {safeCategories.map((cat) => (
+                    {categories.map((cat) => (
                       <option key={cat} value={cat}>
                         {cat}
                       </option>
@@ -373,7 +395,7 @@ function Expenses({
                     value={editExpenseForm.month || ""}
                     onChange={handleEditChange}
                   >
-                    {safeMonthsSK.map((m, i) => (
+                    {monthsSK.map((m, i) => (
                       <option key={i + 1} value={String(i + 1)}>
                         {m}
                       </option>
@@ -389,7 +411,7 @@ function Expenses({
                     value={editExpenseForm.category || ""}
                     onChange={handleEditChange}
                   >
-                    {safeCategories.map((cat) => (
+                    {categories.map((cat) => (
                       <option key={cat} value={cat}>
                         {cat}
                       </option>
@@ -478,8 +500,6 @@ export default Expenses;
 Expenses.propTypes = {
   year: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   expensesList: PropTypes.arrayOf(PropTypes.object),
-  monthsSK: PropTypes.arrayOf(PropTypes.string),
-  categories: PropTypes.arrayOf(PropTypes.string),
   onExpensesChanged: PropTypes.func,
   loadingExpenses: PropTypes.bool,
 };
@@ -487,8 +507,6 @@ Expenses.propTypes = {
 Expenses.defaultProps = {
   year: new Date().getFullYear(),
   expensesList: [],
-  monthsSK: [],
-  categories: [],
   onExpensesChanged: undefined,
   loadingExpenses: false,
 };
