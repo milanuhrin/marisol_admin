@@ -177,8 +177,7 @@ function Expenses({
   const expensesForYear = safeExpensesList.filter((exp) => String(exp.year) === String(year));
 
   // Local loading state only depends on loadingExpenses
-  const [loadingState, setLoadingState] = useState(loadingExpenses);
-
+  const [loadingState, setLoadingState] = useState(true)
   useEffect(() => {
     setLoadingState(loadingExpenses);
   }, [loadingExpenses]);
