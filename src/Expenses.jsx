@@ -168,7 +168,7 @@ function Expenses({
         }}
         onClick={() => setShowExpenseModal(true)}
       >
-        Nový výdavok
+        Nový náklad
       </button>
 
       <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "10px" }}>
