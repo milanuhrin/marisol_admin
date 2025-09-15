@@ -6,7 +6,7 @@ import Charts from "./Charts";
 const RESERVATIONS_API_URL = "https://eb8ya8rtoc.execute-api.us-east-1.amazonaws.com/main/reservation";
 const EXPENSES_API_URL = "https://eb8ya8rtoc.execute-api.us-east-1.amazonaws.com/main/expenses";
 
-const Overview = forwardRef(function Overview({ onDataChanged }, ref) {
+const Overview = forwardRef(function Overview({ onDataChanged, onExpensesChanged }, ref) {
   const [yearlyTotals, setYearlyTotals] = useState({});
   const [loading, setLoading] = useState(true);
   const [showExpenseModal, setShowExpenseModal] = useState(false);
@@ -170,6 +170,7 @@ const Overview = forwardRef(function Overview({ onDataChanged }, ref) {
           note: "",
         });
         await fetchData();
+        onExpensesChanged?.();
       }
     } catch {
       setExpenseError("Chyba pri ukladaní.");
@@ -234,6 +235,7 @@ const Overview = forwardRef(function Overview({ onDataChanged }, ref) {
         });
         setEditingExpenseId(null);
         await fetchData();
+        onExpensesChanged?.();
       }
     } catch {
       setEditError("Chyba pri ukladaní.");
@@ -254,6 +256,7 @@ const Overview = forwardRef(function Overview({ onDataChanged }, ref) {
         setExpensesList((prev) => prev.filter((exp) => exp.expenseId !== expenseId));
         // Refetch totals to update display
         await fetchData();
+        onExpensesChanged?.();
       } else {
         alert("Nepodarilo sa zmazať náklad.");
       }
@@ -726,8 +729,10 @@ const cellStyle = {
   textAlign: "left",
 };
 
-Overview.propTypes = {
-  onDataChanged: PropTypes.any,
-};
 
 export default Overview;
+
+Overview.propTypes = {
+  onDataChanged: PropTypes.func,
+  onExpensesChanged: PropTypes.func,
+};

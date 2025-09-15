@@ -150,6 +150,8 @@ function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, su
             <option value="">Vyberte účet</option>
             <option value="Santander">Santander</option>
             <option value="Revolut">Revolut</option>
+            <option value="Miska VUB">Revolut</option>
+            <option value="Milan TB">Revolut</option>
             <option value="Cash">Cash</option>
           </select>
         </label>
