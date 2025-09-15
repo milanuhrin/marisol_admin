@@ -74,7 +74,20 @@ function AdminPanel({ signOut }) {
       <h2>Administrácia</h2>
       <ReservationTable onDataChanged={fetchData} />
       <Overview reservations={reservations} expenses={expenses} />
-      <Expenses expenses={expenses} onExpensesChanged={fetchData} />
+      <Expenses
+        year={new Date().getFullYear()}
+        expensesList={expenses}
+        monthsSK={[
+          "január", "február", "marec", "apríl", "máj", "jún",
+          "júl", "august", "september", "október", "november", "december"
+        ]}
+        categories={[
+          "property mng", "inventory", "elektrina", "voda", "community fee",
+          "poistenie", "internet", "kamera", "web", "banka",
+          "uctovnictvo", "dane", "Interier/opravy"
+        ]}
+        onExpensesChanged={fetchData}
+      />
     </div>
   );
 }
