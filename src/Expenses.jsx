@@ -2,6 +2,8 @@
 import { useState } from "react";
 import PropTypes from "prop-types";
 
+const currentMonth = new Date().getMonth() + 1; // 1-12
+
 const EXPENSES_API_URL = "https://eb8ya8rtoc.execute-api.us-east-1.amazonaws.com/main/expenses";
 
 function Expenses({ year, expensesList, monthsSK, categories, onExpensesChanged }) {

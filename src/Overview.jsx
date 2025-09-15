@@ -1,12 +1,11 @@
 // Overview.jsx
 import { useEffect, useState, forwardRef, useImperativeHandle, useCallback } from "react";
-import PropTypes from "prop-types";
 import Charts from "./Charts";
 
 const RESERVATIONS_API_URL = "https://eb8ya8rtoc.execute-api.us-east-1.amazonaws.com/main/reservation";
 const EXPENSES_API_URL = "https://eb8ya8rtoc.execute-api.us-east-1.amazonaws.com/main/expenses";
 
-const Overview = forwardRef(function Overview({ onDataChanged }, ref) {
+const Overview = forwardRef(function Overview(_, ref) {
   const [yearlyTotals, setYearlyTotals] = useState({});
   const [loading, setLoading] = useState(true);
   // No longer needed: expense form/modal/edit state
@@ -90,13 +89,6 @@ const Overview = forwardRef(function Overview({ onDataChanged }, ref) {
   useEffect(() => {
     fetchData();
   }, [fetchData]);
-
-  useEffect(() => {
-    // If onDataChanged changes (could be a counter or a ref), trigger refresh
-    if (onDataChanged !== undefined) {
-      fetchData();
-    }
-  }, [onDataChanged, fetchData]);
 
   // Expense form and editing logic removed
 
@@ -214,7 +206,3 @@ const cellStyle = {
 
 
 export default Overview;
-
-Overview.propTypes = {
-  onDataChanged: PropTypes.func,
-};
