@@ -39,8 +39,7 @@ const Overview = forwardRef(function Overview({ onDataChanged, onExpensesChanged
     "júl", "august", "september", "október", "november", "december"
   ];
   const categories = [
-    "property mng", "inventory", "elektrina", "voda", "community fee",
-    "poistenie", "internet", "kamera", "web", "banka", "uctovnictvo", "dane", "Interier/opravy"
+    "property mng", "inventory", "elektrina", "voda", "poistenie", "internet", "kamera", "web", "banka", "uctovnictvo", "dane", "interier/opravy", "community fee", "smeti"
   ];
 
   const fetchData = useCallback(async () => {
