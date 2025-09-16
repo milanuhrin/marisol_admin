@@ -57,6 +57,7 @@ function Expenses({
     category: "",
     amount: "",
     note: "",
+    account: "",
   });
   const [editingExpenseId, setEditingExpenseId] = useState(null);
   const [submittingEdit, setSubmittingEdit] = useState(false);
