@@ -71,7 +71,7 @@ function AdminPanel({ signOut }) {
         onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#b71c1c")}
         onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "#e53935")}
       >
-        Logout
+      Odhlásiť sa
       </button>
 
       <h2>Administrácia</h2>
