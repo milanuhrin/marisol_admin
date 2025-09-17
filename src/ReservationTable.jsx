@@ -17,6 +17,7 @@ function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, su
     initialData.deposit != null ? parseFloat(initialData.deposit) ?? '' : ''
   );
   const [depositDate, setDepositDate] = useState(initialData.depositDate || "");
+  const [depositReturnDate, setDepositReturnDate] = useState(initialData.depositReturnDate || "");
   const [advance, setAdvance] = useState(
     initialData.advance != null ? parseFloat(initialData.advance) ?? '' : ''
   );
@@ -48,6 +49,7 @@ function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, su
       info,
       deposit,
       depositDate,
+      depositReturnDate,
       advance,
       advanceDate,
       remaining,
@@ -204,6 +206,15 @@ function ReservationForm({ initialData = {}, onSubmit, onCancel, submitLabel, su
             type="date"
             value={depositDate || ""}
             onChange={e => setDepositDate(e.target.value)}
+          />
+        </label>
+          <label style={{ flex: 1 }}>
+          Vrátenie depozitu
+          <input
+            name="depositReturnDate"
+            type="date"
+            value={depositReturnDate || ""}
+            onChange={e => setDepositReturnDate(e.target.value)}
           />
         </label>
       </div>
@@ -456,6 +467,7 @@ function ReservationTable({ onDataChanged }) {
               info: values.info,
               deposit: values.deposit !== '' && values.deposit != null ? parseFloat(values.deposit) : undefined,
               depositDate: values.depositDate || null,
+              depositReturnDate: values.depositReturnDate || null,
               advance: values.advance !== '' && values.advance != null ? parseFloat(values.advance) : undefined,
               advanceDate: values.advanceDate || null,
               remaining: values.remaining !== '' && values.remaining != null ? parseFloat(values.remaining) : undefined,
@@ -523,6 +535,7 @@ function ReservationTable({ onDataChanged }) {
               depositDate: values.depositDate || null,
               advance: values.advance !== '' && values.advance != null ? parseFloat(values.advance) : undefined,
               advanceDate: values.advanceDate || null,
+              depositReturnDate: values.depositReturnDate || null,
               remaining: values.remaining !== '' && values.remaining != null ? parseFloat(values.remaining) : undefined,
               remainingDate: values.remainingDate || null,
               total: values.total !== '' && values.total != null ? parseFloat(values.total) : undefined,
@@ -578,6 +591,7 @@ function ReservationTable({ onDataChanged }) {
             <th style={cellStyle}>Poznámka</th>
             <th style={cellStyle}>Depozit</th>
             <th style={cellStyle}>Uhradenie depozitu</th>
+            <th style={cellStyle}>Vrátenie depozitu</th>
             <th style={cellStyle}>Záloha ({formatCurrency(totalAdvance)})</th>
             <th style={cellStyle}>Uhradenie zálohy</th>
             <th style={cellStyle}>Doplatok ({formatCurrency(totalRemaining)})</th>
@@ -606,9 +620,10 @@ function ReservationTable({ onDataChanged }) {
               <td style={cellStyle}>{res.adults}</td>
               <td style={cellStyle}>{res.children}</td>
               <td style={cellStyle}>{res.info}</td>
-              {/* Financial fields in order: deposit, depositDate, advance, advanceDate, remaining, remainingDate, total */}
+              {/* Financial fields in order: deposit, depositDate, depositReturnDate, advance, advanceDate, remaining, remainingDate, total */}
               <td style={cellStyle}>{formatCurrency(res.deposit)}</td>
               <td style={cellStyle}>{res.depositDate ? formatDate(res.depositDate) : "-"}</td>
+              <td style={cellStyle}>{res.depositReturnDate ? formatDate(res.depositReturnDate) : "-"}</td>
               <td style={cellStyle}>{formatCurrency(res.advance)}</td>
               <td style={cellStyle}>{res.advanceDate ? formatDate(res.advanceDate) : "-"}</td>
               <td style={cellStyle}>{formatCurrency(res.remaining)}</td>
