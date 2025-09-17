@@ -19,7 +19,7 @@ const monthsSK = [
 ];
 
 const categories = [
-    "property mng", "inventory", "elektrina", "voda", "smeti", "poistenie", "internet", "kamera", "web", "banka", "uctovnictvo", "interier/opravy", "community fee", "smeti", "licencia", "dane",
+    "property mng", "inventory", "elektrina", "voda", "smeti", "poistenie", "internet", "kamera", "web", "banka", "uctovnictvo", "interier-opravy", "community fee", "smeti", "licencia", "dane",
 ];
 
 const currentMonth = new Date().getMonth() + 1; // 1-12
