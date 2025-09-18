@@ -746,8 +746,6 @@ app.delete("/expenses/:id", async function (req, res) {
   }
 });
 
-
-module.exports = app;
 // TEMPORARY: List raw contents of Reservation for debugging
 app.get("/reservation_raw", async function (req, res) {
   try {
@@ -765,3 +763,8 @@ app.get("/reservation_raw", async function (req, res) {
     res.status(500).json({ error: err.toString() });
   }
 });
+
+const serverless = require("serverless-http");
+
+// Export handler pre AWS Lambda
+module.exports.handler = serverless(app);
