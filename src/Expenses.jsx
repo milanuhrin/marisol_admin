@@ -169,6 +169,8 @@ function Expenses({
 
   const safeExpensesList = Array.isArray(expensesList) ? expensesList : [];
   const expensesForYear = safeExpensesList.filter((exp) => String(exp.year) === String(year));
+  const previousYear = parseInt(year, 10) - 1;
+  const expensesForPreviousYear = safeExpensesList.filter((exp) => String(exp.year) === String(previousYear));
 
   // Local loading state only depends on loadingExpenses
   const [loadingState, setLoadingState] = useState(true)
@@ -180,97 +182,173 @@ function Expenses({
 
   return (
     <div>
-      <h3 style={{ marginTop: "30px" }}>
-        Zoznam nákladov v roku {year || new Date().getFullYear()}
-      </h3>
-      <button
-        style={{
-          marginBottom: "20px",
-          background: "#007bff",
-          color: "white",
-          border: "none",
-          padding: "10px 20px",
-          borderRadius: "4px",
-          cursor: "pointer",
-          fontWeight: "bold",
-        }}
-        onClick={() => setShowExpenseModal(true)}
-      >
-        Nový náklad
-      </button>
+      <>
+        <h3 style={{ marginTop: "30px" }}>
+          Zoznam nákladov v roku {year || new Date().getFullYear()}
+        </h3>
+        <button
+          style={{
+            marginBottom: "20px",
+            background: "#007bff",
+            color: "white",
+            border: "none",
+            padding: "10px 20px",
+            borderRadius: "4px",
+            cursor: "pointer",
+            fontWeight: "bold",
+          }}
+          onClick={() => setShowExpenseModal(true)}
+        >
+          Nový náklad
+        </button>
 
-      {loadingState ? (
-        <p>Načítavam náklady</p>
-      ) : expensesForYear.length === 0 ? (
-        <p>Žiadne náklady</p>
-      ) : (
-        <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "10px" }}>
-          <thead>
-            <tr style={{ background: "#f0f0f0" }}>
-              <th style={cellStyle}>Mesiac</th>
-              <th style={{ ...cellStyle, whiteSpace: "nowrap" }}>Kategória</th>
-              <th style={cellStyle}>Poznámka</th>
-              <th style={cellStyle}>Suma</th>
-              <th style={cellStyle}>Akcie</th>
-            </tr>
-          </thead>
-          <tbody>
-            {expensesForYear
-              .sort((a, b) => parseInt(a.month, 10) - parseInt(b.month, 10))
-              .map((exp) => {
-                const monthName =
-                  exp.month && monthsSK[parseInt(exp.month, 10) - 1]
-                    ? monthsSK[parseInt(exp.month, 10) - 1]
-                    : "";
-                return (
-                  <tr key={exp.expenseId}>
-                    <td style={cellStyle}>{monthName}</td>
-                    <td style={{ ...cellStyle, whiteSpace: "nowrap" }}>{exp.category}</td>
-                    <td style={cellStyle}>{exp.note || ""}</td>
-                    <td style={cellStyle}>
-                      {new Intl.NumberFormat("sk-SK", {
-                        style: "currency",
-                        currency: "EUR",
-                      }).format(parseFloat(exp.amount))}
-                    </td>
-                    <td style={cellStyle}>
-                      <div style={{ display: "flex", gap: "6px" }}>
-                        <button
-                          style={{
-                            padding: "4px 8px",
-                            borderRadius: "3px",
-                            border: "1px solid #007bff",
-                            background: "#007bff",
-                            color: "white",
-                            cursor: "pointer",
-                            fontSize: "0.9em",
-                          }}
-                          onClick={() => openEditModal(exp)}
-                        >
-                          Upraviť
-                        </button>
-                        <button
-                          style={{
-                            padding: "4px 8px",
-                            borderRadius: "3px",
-                            border: "1px solid #dc3545",
-                            background: "#dc3545",
-                            color: "white",
-                            cursor: "pointer",
-                            fontSize: "0.9em",
-                          }}
-                          onClick={() => deleteExpense(exp.expenseId)}
-                        >
-                          Zmazať
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-          </tbody>
-        </table>
-      )}
+        {loadingState ? (
+          <p>Načítavam náklady</p>
+        ) : expensesForYear.length === 0 ? (
+          <p>Žiadne náklady</p>
+        ) : (
+          <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "10px" }}>
+            <thead>
+              <tr style={{ background: "#f0f0f0" }}>
+                <th style={cellStyle}>Mesiac</th>
+                <th style={{ ...cellStyle, whiteSpace: "nowrap" }}>Kategória</th>
+                <th style={cellStyle}>Poznámka</th>
+                <th style={cellStyle}>Suma</th>
+                <th style={cellStyle}>Akcie</th>
+              </tr>
+            </thead>
+            <tbody>
+              {expensesForYear
+                .sort((a, b) => parseInt(a.month, 10) - parseInt(b.month, 10))
+                .map((exp) => {
+                  const monthName =
+                    exp.month && monthsSK[parseInt(exp.month, 10) - 1]
+                      ? monthsSK[parseInt(exp.month, 10) - 1]
+                      : "";
+                  return (
+                    <tr key={exp.expenseId}>
+                      <td style={cellStyle}>{monthName}</td>
+                      <td style={{ ...cellStyle, whiteSpace: "nowrap" }}>{exp.category}</td>
+                      <td style={cellStyle}>{exp.note || ""}</td>
+                      <td style={cellStyle}>
+                        {new Intl.NumberFormat("sk-SK", {
+                          style: "currency",
+                          currency: "EUR",
+                        }).format(parseFloat(exp.amount))}
+                      </td>
+                      <td style={cellStyle}>
+                        <div style={{ display: "flex", gap: "6px" }}>
+                          <button
+                            style={{
+                              padding: "4px 8px",
+                              borderRadius: "3px",
+                              border: "1px solid #007bff",
+                              background: "#007bff",
+                              color: "white",
+                              cursor: "pointer",
+                              fontSize: "0.9em",
+                            }}
+                            onClick={() => openEditModal(exp)}
+                          >
+                            Upraviť
+                          </button>
+                          <button
+                            style={{
+                              padding: "4px 8px",
+                              borderRadius: "3px",
+                              border: "1px solid #dc3545",
+                              background: "#dc3545",
+                              color: "white",
+                              cursor: "pointer",
+                              fontSize: "0.9em",
+                            }}
+                            onClick={() => deleteExpense(exp.expenseId)}
+                          >
+                            Zmazať
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+            </tbody>
+          </table>
+        )}
+
+        <h3 style={{ marginTop: "50px" }}>
+          Zoznam nákladov v roku {previousYear}
+        </h3>
+        {expensesForPreviousYear.length === 0 ? (
+          <p>Žiadne náklady</p>
+        ) : (
+          <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "10px" }}>
+            <thead>
+              <tr style={{ background: "#f0f0f0" }}>
+                <th style={cellStyle}>Mesiac</th>
+                <th style={{ ...cellStyle, whiteSpace: "nowrap" }}>Kategória</th>
+                <th style={cellStyle}>Poznámka</th>
+                <th style={cellStyle}>Suma</th>
+                <th style={cellStyle}>Akcie</th>
+              </tr>
+            </thead>
+            <tbody>
+              {expensesForPreviousYear
+                .sort((a, b) => parseInt(a.month, 10) - parseInt(b.month, 10))
+                .map((exp) => {
+                  const monthName =
+                    exp.month && monthsSK[parseInt(exp.month, 10) - 1]
+                      ? monthsSK[parseInt(exp.month, 10) - 1]
+                      : "";
+                  return (
+                    <tr key={exp.expenseId}>
+                      <td style={cellStyle}>{monthName}</td>
+                      <td style={{ ...cellStyle, whiteSpace: "nowrap" }}>{exp.category}</td>
+                      <td style={cellStyle}>{exp.note || ""}</td>
+                      <td style={cellStyle}>
+                        {new Intl.NumberFormat("sk-SK", {
+                          style: "currency",
+                          currency: "EUR",
+                        }).format(parseFloat(exp.amount))}
+                      </td>
+                      <td style={cellStyle}>
+                        <div style={{ display: "flex", gap: "6px" }}>
+                          <button
+                            style={{
+                              padding: "4px 8px",
+                              borderRadius: "3px",
+                              border: "1px solid #007bff",
+                              background: "#007bff",
+                              color: "white",
+                              cursor: "pointer",
+                              fontSize: "0.9em",
+                            }}
+                            onClick={() => openEditModal(exp)}
+                          >
+                            Upraviť
+                          </button>
+                          <button
+                            style={{
+                              padding: "4px 8px",
+                              borderRadius: "3px",
+                              border: "1px solid #dc3545",
+                              background: "#dc3545",
+                              color: "white",
+                              cursor: "pointer",
+                              fontSize: "0.9em",
+                            }}
+                            onClick={() => deleteExpense(exp.expenseId)}
+                          >
+                            Zmazať
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+            </tbody>
+          </table>
+        )}
+      </>
 
       {/* Modal pre nový náklad */}
       {showExpenseModal && (
