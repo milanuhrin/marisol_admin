@@ -44,6 +44,12 @@
     }
   },
   "function": {
+    "reservationEmail": {
+      "build": true,
+      "dependsOn": [],
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
+    },
     "updateAvailability": {
       "build": true,
       "providerPlugin": "awscloudformation",
@@ -51,6 +57,22 @@
     }
   },
   "parameters": {
+    "AMPLIFY_function_reservationEmail_destinationEmail": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "reservationEmail"
+        }
+      ]
+    },
+    "AMPLIFY_function_reservationEmail_sourceEmail": {
+      "usedBy": [
+        {
+          "category": "function",
+          "resourceName": "reservationEmail"
+        }
+      ]
+    },
     "AMPLIFY_function_updateAvailability_deploymentBucketName": {
       "usedBy": [
         {
